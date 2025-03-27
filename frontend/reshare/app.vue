@@ -16,7 +16,7 @@ import { NuxtLink } from '#components';
 
     <template #end>
 
-      <div class="flex items-center gap-2">
+      <div class="flex flex-row gap-1">
       
           <NuxtLink to="login"> 
             <Button label="Login" />
