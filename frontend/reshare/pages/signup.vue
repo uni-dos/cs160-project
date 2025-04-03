@@ -1,53 +1,52 @@
 <template>
-    <div class="signup-container">
-      <h1>Sign Up</h1>
-      <form submit="handleSubmit">
-        <div>
-          <label for="username">Username:</label>
-          <input type="username" id="username" required />
-        </div>
-        <div>
-          <label for="password">Password:</label>
-          <input type="password" id="password" v-model="password" required />
-        </div>
-        <button type="submit">Sign Up</button>
-      </form>
-  
-      <div v-if="errorMessage" class="error">{{ errorMessage }}</div>
-      <div v-if="successMessage" class="success">{{ successMessage }}</div>
+  <form @submit.prevent="handleSingUp" class="flex flex-col gap-4 w-full sm:w-56">
+   
+    <div class="flex flex-col gap-1">
+      
+      <InputText
+        id="username"
+        v-model="username"
+        placeholder="Username"
+      />
+      
     </div>
-  </template>
-  
-  <script lang="ts">
-  import { defineComponent } from 'vue';
-  import axios from 'axios'
-  
-  export default defineComponent({
-    data() {
-      return {
-        username: '',
-        password: '',
-        errorMessage: '',
-        successMessage: '',
-      };
-    },
-    methods: {
-      async handleSubmit() {
-        try {
-          const response = await axios.post('http://localhost:5000/signup', {
-            username: this.username,
-            password: this.password,
-          });
-  
-          if (response.status === 201) {
-            this.successMessage = response.data.message;
-            this.errorMessage = '';
-          }
-        } catch (error: any) {
-          this.errorMessage = error.response.data.message;
-          this.successMessage = '';
-        }
-      },
-    },
-  });
-  </script>
+
+    <div class="flex flex-col gap-1">
+      
+      <Password
+        id="password"
+        v-model="password"
+        feedback="false"
+        placeholder="Password"
+        
+      />
+    </div>
+
+    <Button label="SignUp" type="submit"/>
+  </form>
+
+</template>
+
+<script setup>
+import axios from 'axios';
+import { ref } from 'vue';
+
+const username = ref('');
+const password = ref('');
+
+const handleSingUp = async () => {
+  // send a request
+  if (username.value && password.value) {
+      const response = await axios.post('http://localhost:5000/signup', {
+        username: this.username.value,
+        password: this.password.value,
+      });
+
+      if (response.status === 201) {
+        // created account now go to login page
+      }
+      // anything else get the error
+      // and say what the issue was
+  }
+};
+</script>
