@@ -1,11 +1,11 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "d42761c9120f4d448b538b239483571f552f1b78a9b3d572959466305d64dbf3"
+            "sha256": "a12c1ed6887725beb4b0de78ccf706b7e56ef5ad588f6ce9db0ea16c80d92b62"
         },
         "pipfile-spec": 6,
         "requires": {
-            "python_version": "3.10"
+            "python_version": "3.11"
         },
         "sources": [
             {
@@ -71,7 +71,6 @@
                 "sha256:f81b0ed2639568bf14749112298f9e4e2b28853dab50a8b357e31798686a036d"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.8'",
             "version": "==4.3.0"
         },
         "blinker": {
@@ -96,7 +95,6 @@
                 "sha256:d667207822eb83f1c4b50949b1623c8fc8d51f2341d65f72e1a1815397551136"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.9'",
             "version": "==3.1.0"
         },
         "flask-cors": {
@@ -105,7 +103,6 @@
                 "sha256:fa5cb364ead54bbf401a26dbf03030c6b18fb2fcaf70408096a572b409586b0c"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.9' and python_version < '4.0'",
             "version": "==5.0.1"
         },
         "flask-sqlalchemy": {
@@ -114,7 +111,6 @@
                 "sha256:e4b68bb881802dda1a7d878b2fc84c06d1ee57fb40b874d3dc97dabfa36b8312"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.8'",
             "version": "==3.1.1"
         },
         "greenlet": {
@@ -193,7 +189,7 @@
                 "sha256:f406b22b7c9a9b4f8aa9d2ab13d6ae0ac3e85c9a809bd590ad53fed2bf70dc79",
                 "sha256:f6ff3b14f2df4c41660a7dec01045a045653998784bf8cfcb5a525bdffffbc8f"
             ],
-            "markers": "python_version >= '3.7'",
+            "markers": "python_version < '3.14' and platform_machine == 'aarch64' or (platform_machine == 'ppc64le' or (platform_machine == 'x86_64' or (platform_machine == 'amd64' or (platform_machine == 'AMD64' or (platform_machine == 'win32' or platform_machine == 'WIN32')))))",
             "version": "==3.1.1"
         },
         "itsdangerous": {
@@ -309,7 +305,6 @@
                 "sha256:e8338a9babe6c67287080ec9f6a0fc245de24841bc532ef97dfd1f93caf4668b"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.9'",
             "version": "==9.2.0"
         },
         "pymysql": {
@@ -318,7 +313,6 @@
                 "sha256:e127611aaf2b417403c60bf4dc570124aeb4a57f5f37b8e95ae399a42f904cd0"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.7'",
             "version": "==1.1.1"
         },
         "sqlalchemy": {
