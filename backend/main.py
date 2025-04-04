@@ -19,14 +19,14 @@ def login():
     # get User from db
     user = User.query.filter_by(username=username).first()
     if not user:
-        return jsonify({"message": "Username not found"}), 404
+        return jsonify({"message": "Incorrect username or password"}), 404
     
     # compare password to the hashed password
     if checkpw(password.encode("utf-8"), user.password.encode("utf-8")):
         # return username to frontend
         return jsonify({"username": username}), 201
     else:
-        return jsonify({"message": "Incorrect password"}), 401
+        return jsonify({"message": "Incorrect username or password"}), 401
 
 
 @app.route("/signup", methods=["POST"])
@@ -43,12 +43,17 @@ def signup():
     # generate hashed password
     hashed_password = hashpw(password.encode("utf-8"), gensalt())
     
-    # store User in db
-    new_user = User(username=username, password=hashed_password)
     try:
+        # check if username already exists
+        user = User.query.filter_by(username=username).first()
+        if user:
+            return jsonify({"taken": True, "message": "Username already taken"}), 404
+        # store User in db
+        new_user = User(username=username, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
     except Exception as e:
+        db.session.rollback()
         return jsonify({"message": str(e)}), 400
     
     # return username to frontend
