@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import CheckConstraint
 
 class Follow(db.Model):
-    __tablename__ = "Follow"
+    __tablename__ = "follow"
     username_follower = db.Column(db.String(256), db.ForeignKey("user.username", onupdate="CASCADE", ondelete="CASCADE"), nullable=False)
     username_followee = db.Column(db.String(256), db.ForeignKey("user.username", onupdate="CASCADE", ondelete="CASCADE"), nullable=False)
 
