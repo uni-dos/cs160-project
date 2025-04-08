@@ -1,9 +1,13 @@
 from flask import request, jsonify
 from config import app, db
-from models import User
+from models import User, Recipe  # Make sure to import Recipe
 from bcrypt import hashpw, checkpw, gensalt
 
+@app.route("/")
+def home():
+    return "✅ Flask is running!"
 
+# Login functionality
 @app.route("/login", methods=["POST"])
 def login():
     username = request.json.get("username")
@@ -15,19 +19,16 @@ def login():
             400
         )
     
-    # get User from db
     user = User.query.filter_by(username=username).first()
     if not user:
         return jsonify({"message": "Username not found"}), 404
     
-    # compare password to the hashed password
     if checkpw(password.encode("utf-8"), user.password.encode("utf-8")):
-        # return username to frontend
         return jsonify({"username": username}), 201
     else:
         return jsonify({"message": "Incorrect password"}), 401
 
-
+# Signup functionality
 @app.route("/signup", methods=["POST"])
 def signup():
     username = request.json.get("username")
@@ -39,10 +40,8 @@ def signup():
             400
         )
     
-    # generate hashed password
     hashed_password = hashpw(password.encode("utf-8"), gensalt())
     
-    # store User in db
     new_user = User(username=username, password=hashed_password)
     try:
         db.session.add(new_user)
@@ -50,9 +49,41 @@ def signup():
     except Exception as e:
         return jsonify({"message": str(e)}), 400
     
-    # return username to frontend
     return jsonify({"username": username}), 201
 
+# 🔥 New: Create Recipe
+@app.route("/recipe", methods=["POST"])
+def create_recipe():
+    data = request.get_json()
+    
+    title = data.get("title")
+    short_description = data.get("short_description")
+    steps = data.get("steps")
+    time = data.get("time")
+    servings = data.get("servings")
+    author_username = data.get("author_username")
 
+    if not (title and steps and author_username):
+        return jsonify({"message": "Missing required fields"}), 400
+
+    new_recipe = Recipe(
+        title=title,
+        short_description=short_description,
+        steps=steps,
+        time=time,
+        servings=servings,
+        author_username=author_username,
+        sustainability_rating=0,
+        average_rating=0
+    )
+
+    try:
+        db.session.add(new_recipe)
+        db.session.commit()
+        return jsonify({"message": "Recipe created!"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Start Flask server
 if __name__ == "__main__":
     app.run(debug=True)
