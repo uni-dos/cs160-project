@@ -31,19 +31,25 @@ export default {
     };
   },
   methods: {
-    async handleSubmit() {
+    handleSubmit() {
+      this.isSubmitting = true;
+      
       // The fields can never be empty as primvue checks
-       await axios.post('http://localhost:5000/signup', {
-          username: this.username,
-          password : this.password
+      axios.post('http://localhost:5000/signup', {
+          "username": this.username,
+          "password" : this.password
         })
         .then(function (response) {
           console.log(response);
+          if (response.status === 201) {
+            // move to the next page
+          }
         })
         .catch(function (error) {
-          console.log(error);
+          // error.response.data
+          console.log(error.response.data.message);
         });
-
+        this.isSubmitting = false;
 
       
     }
