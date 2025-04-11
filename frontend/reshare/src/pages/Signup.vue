@@ -41,6 +41,8 @@
           })
           .then(function (response) {
             console.log(response);
+            // pass in username
+            // so router.push(nextpage params: username)
             if (response.status === 201) {
               // move to the next page
             }
