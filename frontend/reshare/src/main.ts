@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import PrimeVue from 'primevue/config'
 import Aura from '@primeuix/themes/aura';
 import { FormField } from '@primevue/forms';
-import { Button, InputText, Message, Password } from 'primevue';
+import { Button, InputText, Message, Password, FloatLabel } from 'primevue';
 import App from './App.vue'
 
 import { createRouter, createWebHistory } from 'vue-router';
@@ -39,6 +39,7 @@ app.component('Button', Button);
 app.component('InputText', InputText);
 app.component('Message', Message);
 app.component('Password', Password);
+app.component('FloatLabel', FloatLabel);
 
 
 app.mount('#app');

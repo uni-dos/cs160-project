@@ -1,13 +1,19 @@
 <template>
     <div class="container">
       <form @submit.prevent="handleSubmit" class="centered">
-        <FormField label="Username">
-          <InputText v-model="username" id="username" placeholder="Username" required />
+        <FloatLabel variant="on">
+            <FormField label="Username">
+            <InputText v-model="username" id="username" required variant="filled" size="large"/>
+            <label for="username">Username</label>
         </FormField>
+        </FloatLabel>
   
-        <FormField label="Password">
-          <Password v-model="password" id="password" placeholder="Password" required />
-        </FormField>
+        <FloatLabel variant="on">
+          <FormField label="Password">
+          <Password v-model="password" id="password" toggleMask required />
+          <label for="password">Password</label>
+          </FormField>
+        </FloatLabel>
   
         <Button label="Sign Up" type="submit" :disabled="isSubmitting" />
       </form>
