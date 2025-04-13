@@ -10,12 +10,14 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Signup from './pages/Signup.vue';
 import Login from './pages/Login.vue';
 import MainPage from './pages/MainPage.vue'
+import Homepage from './pages/Homepage.vue';
 
 // this will change the current page
 const routes = [
     {path: '/', component: MainPage},
     {path: '/login', component: Login},
-    {path: '/signup', component: Signup}
+    {path: '/signup', component: Signup},
+    {path: '/:username/homepage', component: Homepage},
 ];
 
 const router = createRouter({

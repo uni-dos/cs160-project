@@ -31,28 +31,29 @@
       };
     },
     methods: {
-      handleSubmit() {
+      async handleSubmit() {
         this.isSubmitting = true;
         
         // The fields can never be empty as primvue checks
-        axios.post('http://localhost:5000/signup', {
+        await axios.post('http://localhost:5000/signup', {
             "username": this.username,
             "password" : this.password
           })
-          .then(function (response) {
+          .then(response => {
             console.log(response);
             // pass in username
             // so router.push(nextpage params: username)
             if (response.status === 201) {
               // move to the next page
+              this.$router.push('/' + response.data.username + '/homepage');
             }
           })
-          .catch(function (error) {
+          .catch(error => {
             // error.response.data
             console.log(error.response.data.message);
           });
           this.isSubmitting = false;
-  
+          
         
       }
     }
