@@ -256,6 +256,7 @@ def get_likes(username):
                 "recipe_id": row.recipe_id,
                 "author_username": row.author_username,
                 "publish_date": row.publish_date,
+                "title": row.title,
                 "short_description": row.short_description,
                 "steps": row.steps,
                 "time": row.time,
@@ -330,6 +331,7 @@ def get_bookmarks(username):
                 "recipe_id": row.recipe_id,
                 "author_username": row.author_username,
                 "publish_date": row.publish_date,
+                "title": row.title,
                 "short_description": row.short_description,
                 "steps": row.steps,
                 "time": row.time,
@@ -431,6 +433,42 @@ def get_followers(username):
         result = db.session.execute(sql, {"username": username})
         followers = [row.username_follower for row in result]
         return jsonify({"username": username, "followers": followers}), 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 400
+
+# search (FULLTEXT index added to recipe(title, short_description, steps) columns a
+@app.route("/search", methods=["GET"])
+def search_recipes():
+    search_term = request.json.get("search_term")
+
+    if not search_term:
+        return jsonify({"message": "Invalid data"}), 400
+    
+    try:
+        sql = text("""
+                    SELECT DISTINCT recipe.recipe_id, recipe.author_username, recipe.publish_date, recipe.title,
+                                    recipe.short_description, recipe.steps, recipe.time, recipe.servings,
+                                    recipe.sustainability_rating, recipe.average_rating
+                    FROM recipe
+                    WHERE MATCH(recipe.title, recipe.short_description, recipe.steps) AGAINST(:search_term in NATURAL LANGUAGE MODE)
+                   """)
+        result = db.session.execute(sql, {"search_term": search_term})
+        search_results = [
+            {
+                "recipe_id": row.recipe_id,
+                "author_username": row.author_username,
+                "publish_date": row.publish_date,
+                "title": row.title,
+                "short_description": row.short_description,
+                "steps": row.steps,
+                "time": row.time,
+                "servings": row.servings,
+                "sustainability_rating": row.sustainability_rating,
+                "average_rating": row.average_rating
+            }
+            for row in result
+        ]
+        return jsonify({"search_results": search_results}), 200
     except Exception as e:
         return jsonify({"message": str(e)}), 400
 
