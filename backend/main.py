@@ -148,6 +148,87 @@ def get_followers(username):
     except Exception as e:
         return jsonify({"message": str(e)}), 400
 
+
+@app.route("/like", methods=["POST"])
+def like():
+    pass
+
+
+@app.route("/unlike", methods=["POST"])
+def unlike():
+    pass
+
+
+@app.route("/get-likes", methods=["GET"])
+def get_likes():
+    pass
+
+
+@app.route("/bookmark", methods=["POST"])
+def bookmark():
+    pass
+
+
+@app.route("/unbookmark", methods=["POST"])
+def unbookmark():
+    pass
+
+
+@app.route("/get-bookmarks", methods=["GET"])
+def get_bookmarks():
+    pass
+
+
+@app.route("/rate", methods=["POST"])
+def rate():
+    pass
+
+
+@app.route("/unrate", methods=["POST"])
+def unrate():
+    pass
+
+
+@app.route("/delete-recipe", methods=["POST"])
+def delete_post():
+    pass
+
+
+@app.route("/get-recipe", methods=["GET"])
+def get_recipe():
+    pass
+
+
+@app.route("/get-following-recipes", methods=["GET"])
+def get_following_posts():
+    pass
+
+
+@app.route("/get-user-recipes", methods=["GET"])
+def get_user_posts():
+    pass
+
+
+@app.route("/create-comment", methods=["POST"])
+def create_comment():
+    pass
+
+
+@app.route("/delete-comment", methods=["POST"])
+def delete_comment():
+    pass
+
+
+@app.route("/get-recipe-comments", methods=["GET"])
+def get_comments():
+    pass
+
+
+@app.route("/search", methods=["GET"])
+def search():
+    pass
+
+
 # Run Flask app
 if __name__ == "__main__":
     app.run(debug=True)
