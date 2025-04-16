@@ -226,6 +226,17 @@ def unlike_recipe():
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
+# get num likes
+@app.route("/get-num-likes/<recipe_id>", methods=["GET"])
+def get_num_likes(recipe_id):
+    try:
+        sql = text("SELECT COUNT(*) FROM likes WHERE recipe_id = :recipe_id")
+        num_likes = db.session.execute(sql, {"recipe_id": recipe_id}).scalar()
+        return jsonify({"recipe_id": recipe_id, "num_likes": num_likes})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 400
+
 #comment
 @app.route("/comment", methods=["POST"])
 def comment_recipe():
