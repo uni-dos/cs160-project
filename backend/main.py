@@ -232,10 +232,66 @@ def get_num_likes(recipe_id):
     try:
         sql = text("SELECT COUNT(*) FROM likes WHERE recipe_id = :recipe_id")
         num_likes = db.session.execute(sql, {"recipe_id": recipe_id}).scalar()
-        return jsonify({"recipe_id": recipe_id, "num_likes": num_likes})
+        return jsonify({"recipe_id": recipe_id, "num_likes": num_likes}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 400
+    
+# create bookmark
+@app.route("/bookmark", methods=["POST"])
+def bookmark():
+    recipe_id = request.json.get("recipe_id")
+    username = request.json.get("username")
+
+    if not (recipe_id or username):
+        return jsonify({"message": "Missing fields"}), 400
+    
+    try:
+        sql = text("""
+                    INSERT INTO bookmark (recipe_id, username)
+                    VALUES (:recipe_id, :username)
+                   """)
+        db.session.execute(sql, {"recipe_id": recipe_id, "username": username})
+        db.session.commit()
+        return jsonify({"recipe_id": recipe_id, "username": username}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": str(e)}), 400
+
+# unbookmark
+@app.route("/unbookmark", methods=["DELETE"])
+def unbookmark():
+    recipe_id = request.json.get("recipe_id")
+    username = request.json.get("username")
+
+    if not (recipe_id or username):
+        return jsonify({"message": "Missing fields"}), 400
+    
+    try:
+        sql = text("""
+                    DELETE FROM bookmark
+                    WHERE recipe_id = :recipe_id AND username = :username
+                   """)
+        db.session.execute(sql, {"recipe_id": recipe_id, "username": username})
+        db.session.commit()
+        return jsonify({"recipe_id": recipe_id, "username": username}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": str(e)}), 400
+
+# get bookmarked recipes
+@app.route("/get-bookmarks/<username>", methods=["GET"])
+def get_bookmarks(username):
+    if not username:
+        return jsonify({"message": "Missing fields"}), 400
+    
+    try:
+        sql = text("SELECT recipe_id FROM bookmark WHERE username = :username")
+        result = db.session.execute(sql, {"username": username})
+        bookmarks = [row.recipe_id for row in result]
+        return jsonify({"username": username, "bookmarks": bookmarks}), 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 400
 
 #comment
 @app.route("/comment", methods=["POST"])
