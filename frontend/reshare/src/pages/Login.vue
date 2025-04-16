@@ -10,7 +10,7 @@
   
         <FloatLabel variant="on">
           <FormField label="Password">
-          <Password v-model="password" id="password" toggleMask required />
+          <Password v-model="password" id="password" :feedback="false" toggleMask required />
           <label for="password">Password</label>
           </FormField>
         </FloatLabel>
@@ -18,8 +18,8 @@
         <Button label="Log In" type="submit" :disabled="isSubmitting" />
       </form>
   
-      <div v-if="errorMessage">
-        <p>{{ errorMessage }}</p>
+      <div>
+        <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       </div>
     </div>
   </template>
@@ -55,7 +55,13 @@
             }
           })
           .catch(error => {
-            // error.response.data
+            // retrieve the "taken" or "message field from backend response"
+            if (error.response && error.response.data && error.response.data.message) {
+              this.errorMessage = error.response.data.message;
+            }
+            else {
+              this.errorMessage = "Could not login. Try again later";
+            }
             console.log(error.response.data.message);
           });
           this.isSubmitting = false;
@@ -70,6 +76,7 @@
   
   .container {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
@@ -79,6 +86,10 @@
     flex-direction: column;   
     gap: 10px;
     text-align: center;   
+  }
+
+  .error {
+    color: red;
   }
   
   
