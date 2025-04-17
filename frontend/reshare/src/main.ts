@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import PrimeVue from 'primevue/config'
 import Aura from '@primeuix/themes/aura';
 import { FormField } from '@primevue/forms';
-import { Button, InputText, Message, Password, FloatLabel } from 'primevue';
+import { Button, InputText, Message, Password, FloatLabel, Card } from 'primevue';
 
 // for icons 
 import 'primeicons/primeicons.css'
@@ -10,6 +10,7 @@ import { IcOrganicFood } from '@kalimahapps/vue-icons';
 
 // custom component
 import Navbar from './components/Navbar.vue';
+import Recipe from './components/Recipe.vue';
 
 import App from './App.vue'
 
@@ -50,5 +51,7 @@ app.component('Password', Password);
 app.component('FloatLabel', FloatLabel);
 app.component('IcOrganicFood', IcOrganicFood);
 app.component('Navbar', Navbar);
+app.component('Card', Card);
+app.component('Recipe', Recipe);
 
 app.mount('#app');

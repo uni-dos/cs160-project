@@ -2,8 +2,7 @@
     <div class="header">
       <ul class="left-links">
         <Button><IcOrganicFood/><label>Rehare</label></Button>
-        <Button label="Following" icon="pi 
-pi-users" @click="emitClicked('following')"></Button>
+        <Button label="Following" icon="pi pi-users" @click="emitClicked('following')"></Button>
         <Button label="Bookmarks" icon="pi pi-bookmark" @click="emitClicked('bookmarks')"></Button>
         <Button label="Create" icon="pi pi-pen-to-square" @click="emitClicked('create')"></Button>
       </ul>
