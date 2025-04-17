@@ -3,6 +3,14 @@ import PrimeVue from 'primevue/config'
 import Aura from '@primeuix/themes/aura';
 import { FormField } from '@primevue/forms';
 import { Button, InputText, Message, Password, FloatLabel } from 'primevue';
+
+// for icons 
+import 'primeicons/primeicons.css'
+import { IcOrganicFood } from '@kalimahapps/vue-icons';
+
+// custom component
+import Navbar from './components/Navbar.vue';
+
 import App from './App.vue'
 
 import { createRouter, createWebHistory } from 'vue-router';
@@ -10,7 +18,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Signup from './pages/Signup.vue';
 import Login from './pages/Login.vue';
 import MainPage from './pages/MainPage.vue'
-import Homepage from './pages/Homepage.vue';
+import Homepage from './pages/Homepage.vue'
 
 // this will change the current page
 const routes = [
@@ -40,6 +48,7 @@ app.component('InputText', InputText);
 app.component('Message', Message);
 app.component('Password', Password);
 app.component('FloatLabel', FloatLabel);
-
+app.component('IcOrganicFood', IcOrganicFood);
+app.component('Navbar', Navbar);
 
 app.mount('#app');

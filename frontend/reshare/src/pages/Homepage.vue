@@ -1,7 +1,3 @@
-<script setup>
-import Navbar from '@/components/Navbar.vue'
-</script>
-
 <template>
     <Navbar />
     <!-- Might need to be the username -->

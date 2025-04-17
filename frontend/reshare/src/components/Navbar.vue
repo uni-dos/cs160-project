@@ -1,19 +1,29 @@
-<script setup>
-</script>
-
 <template>
     <div class="header">
       <ul class="left-links">
-        <li><a href="#">Reshare</a></li>
-        <li><a href="#">Following</a></li>
-        <li><a href="#">Bookmarks</a></li>
-        <li><a href="#">Create</a></li>
+        <Button><IcOrganicFood/><label>Rehare</label></Button>
+        <Button label="Following" icon="pi 
+pi-users" @click="emitClicked('following')"></Button>
+        <Button label="Bookmarks" icon="pi pi-bookmark" @click="emitClicked('bookmarks')"></Button>
+        <Button label="Create" icon="pi pi-pen-to-square" @click="emitClicked('create')"></Button>
       </ul>
       <ul class="right-links">
-        <li><a href="#">Profile</a></li>
+        <Button label="Profile" icon="pi pi-user" @click="emitClicked('profile')"></Button>
       </ul>
     </div>
 </template>
+
+<script lang="ts">
+
+export default {
+  methods: {
+    emitClicked(buttonPressed : string) {
+      console.log(buttonPressed);
+      this.$emit(buttonPressed);
+    },
+  },
+};
+</script>
 
 <style scoped>
 
@@ -31,9 +41,5 @@ ul {
   gap: 16px;
 }
 
-a {
-  color: white;
-  text-decoration: none;
-}
 
 </style>

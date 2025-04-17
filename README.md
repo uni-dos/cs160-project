@@ -3,3 +3,5 @@ A sustainable recipe-sharing platform that promotes reducing one's carbon footpr
 
 Technologies used
 - MySQL
+- Python
+- Vue
