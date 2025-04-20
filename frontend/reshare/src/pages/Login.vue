@@ -62,7 +62,6 @@
             else {
               this.errorMessage = "Could not login. Try again later";
             }
-            console.log(error.response.data.message);
           });
           this.isSubmitting = false;
           

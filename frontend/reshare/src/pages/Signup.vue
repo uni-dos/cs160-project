@@ -82,7 +82,7 @@
           else {
             this.errorMessage = "Could not signup. Try again later";
             }
-          console.log(error.response.data.message);
+          
         });
         this.isSubmitting = false;
           
