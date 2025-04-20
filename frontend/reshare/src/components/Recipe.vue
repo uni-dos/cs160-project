@@ -1,6 +1,6 @@
 <template>
     <Card style="width: 25rem; overflow: hidden">
-       
+        
         <template #title>Advanced Card</template>
         <template #subtitle>Card subtitle</template>
         <template #content>
