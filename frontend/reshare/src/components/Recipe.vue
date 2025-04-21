@@ -1,12 +1,11 @@
 <template>
     <Card style="width: 25rem; overflow: hidden">
         
-        <template #title>Advanced Card</template>
-        <template #subtitle>Card subtitle</template>
+        <template #title>{{title}}</template>
+        <template #subtitle>{{ desc }}</template>
         <template #content>
             <p class="m-0">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae numquam deserunt quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse, cupiditate neque
-                quas!
+                {{ steps }}
             </p>
         </template>
         <template #footer>
@@ -17,5 +16,21 @@
         </template>
     </Card>
 </template>
+
+<script lang="ts">
+export default {
+    props : {
+        title : {
+            type : String
+        },
+        desc : {
+            type : String
+        },
+        steps : {
+            type : String
+        },
+    }
+}
+</script>
 
 
