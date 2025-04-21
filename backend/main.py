@@ -2,7 +2,7 @@ from flask import request, jsonify
 from config import app, db
 from models import User, Recipe, Follow  # import all used models
 from bcrypt import hashpw, checkpw, gensalt
-from sqlalchemy import text
+from sqlalchemy import text, select
 
 @app.route("/")
 def home():
@@ -83,6 +83,17 @@ def create_recipe():
         return jsonify({"message": "Recipe created!"}), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+# Retrieve Recipes
+@app.route("/recipe", methods=["GET"])
+def get_recipes():
+    recipes = Recipe.query.all()
+    if not recipes:
+        return jsonify({"message" : "No recipes"}), 303 # 303 meaning there is nothing
+    recipes_list = []
+    for recipe in recipes:
+        recipes_list.append(recipe.to_json())
+    return jsonify({"recipes" : recipes_list}), 201
 
 # Follow
 @app.route("/follow", methods=["POST"])
