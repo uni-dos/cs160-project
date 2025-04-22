@@ -3,11 +3,12 @@
     <!-- Might need to be the username -->
      <h1>{{ $route.params.username }}</h1>
 
-    <div>
+    <div class="row">
         <Recipe v-for="r in items" 
-        :key="r.recipe_id" :title="r.title"
-        :user="r.author_username" :steps="r.steps" 
-        :rating="r.sustainability_rating" :servings="r.servings"/>
+            :key="r.recipe_id" :title="r.title"
+            :user="r.author_username" :steps="r.steps" :desc="r.short_description" 
+            :rating="r.sustainability_rating" :servings="r.servings"/>
+        
         </div>
 </template>
 
@@ -49,3 +50,11 @@
     }
 
 </script>
+
+<style scoped>
+.row {
+    display: flex;
+    grid-auto-flow: row;
+    gap: 10px;
+}
+</style>

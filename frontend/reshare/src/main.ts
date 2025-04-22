@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import PrimeVue from 'primevue/config'
 import Aura from '@primeuix/themes/aura';
 import { FormField } from '@primevue/forms';
-import { Button, InputText, Message, Password, FloatLabel, Card, Divider } from 'primevue';
+import { Button, InputText, Message, Password, FloatLabel, Card, Divider, ProgressSpinner} from 'primevue';
 
 // for icons 
 import 'primeicons/primeicons.css'
@@ -54,5 +54,5 @@ app.component('Navbar', Navbar);
 app.component('Card', Card);
 app.component('Divider', Divider);
 app.component('Recipe', Recipe);
-
+app.component('ProgressSpinner', ProgressSpinner);
 app.mount('#app');

@@ -11,8 +11,9 @@
 
         </template>
         <template #footer>
-            <div class="flex gap-4 mt-1">
+            <div class="row">
                 <Button severity="secondary" outlined class="w-full"> Sustainability: {{ rating }}</Button>
+                <Button severity="info" outlined class="w-full" icon="pi pi-sparkles" label="Rate"></Button>
             </div>
         </template>
     </Card>
@@ -50,3 +51,10 @@ export default {
 </script>
 
 
+<style scoped>
+.row {
+    display: flex;
+    grid-auto-flow: row;
+    gap: 10px;
+}
+</style>
