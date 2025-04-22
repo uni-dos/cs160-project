@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import PrimeVue from 'primevue/config'
 import Aura from '@primeuix/themes/aura';
 import { FormField } from '@primevue/forms';
-import { Button, InputText, Message, Password, FloatLabel, Card } from 'primevue';
+import { Button, InputText, Message, Password, FloatLabel, Card, Divider } from 'primevue';
 
 // for icons 
 import 'primeicons/primeicons.css'
@@ -52,6 +52,7 @@ app.component('FloatLabel', FloatLabel);
 app.component('IcOrganicFood', IcOrganicFood);
 app.component('Navbar', Navbar);
 app.component('Card', Card);
+app.component('Divider', Divider);
 app.component('Recipe', Recipe);
 
 app.mount('#app');
