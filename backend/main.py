@@ -321,6 +321,11 @@ def get_followers(username):
     except Exception as e:
         return jsonify({"message": str(e)}), 400
 
+@app.route("/logout", methods=["POST"])
+def logout():
+    session.clear()
+    return jsonify({"message" : "logged out"}), 200
+    
 # Run Flask app
 if __name__ == "__main__":
     app.run(debug=True)

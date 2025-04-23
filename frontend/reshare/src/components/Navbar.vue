@@ -7,14 +7,28 @@
         <Button label="Create" icon="pi pi-pen-to-square" @click="emitClicked('create')"></Button>
       </ul>
       <ul class="right-links">
-        <Button label="Profile" icon="pi pi-user" @click="emitClicked('profile')"></Button>
+        <SplitButton label="Profile" icon="pi pi-user" @click="emitClicked('profile')" :model="logout"></SplitButton>
+        
       </ul>
     </div>
 </template>
 
 <script lang="ts">
-
+import axios from 'axios'
 export default {
+  data () {
+    return {logout : [{label : "Logout", command: async () => {
+      await axios.post('/logout')
+      .then (response => {
+        if (response.status === 200) {
+          this.$router.push('/');
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+      console.log("Logout")}}]}; 
+  },
   methods: {
     emitClicked(buttonPressed : string) {
       console.log(buttonPressed);

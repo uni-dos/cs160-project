@@ -41,13 +41,11 @@
                 }
                 else if (response.status === 303) {
                     // no posts
-                } else if (response.status === 401) {
-                    // user not logged in
-                    this.$router.push('/login');
                 }
             })
             .catch(error => {
                 console.log(error);
+                this.$router.push('/login');
             });
         },
     }
