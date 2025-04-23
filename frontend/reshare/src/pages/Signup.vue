@@ -61,7 +61,7 @@
         this.isSubmitting = true;
         
         // The fields can never be empty as primvue checks
-        await axios.post('http://localhost:5000/signup', {
+        await axios.post('/signup', {
             "username": this.username,
             "password" : this.password
         })

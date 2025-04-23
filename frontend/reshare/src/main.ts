@@ -20,7 +20,10 @@ import Signup from './pages/Signup.vue';
 import Login from './pages/Login.vue';
 import MainPage from './pages/MainPage.vue'
 import Homepage from './pages/Homepage.vue'
+import axios from 'axios'
 
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = 'http://localhost:5000';
 // this will change the current page
 const routes = [
     {path: '/', component: MainPage},

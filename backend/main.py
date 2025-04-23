@@ -1,4 +1,5 @@
-from flask import request, jsonify
+from flask import request, jsonify, session
+from flask_session import Session
 from config import app, db
 from models import User, Recipe, Follow  # import all used models
 from bcrypt import hashpw, checkpw, gensalt
@@ -22,6 +23,7 @@ def login():
         return jsonify({"message": "Incorrect username or password"}), 404
     
     if checkpw(password.encode("utf-8"), user.password.encode("utf-8")):
+        session["name"] = username
         return jsonify({"username": username}), 201
     else:
         return jsonify({"message": "Incorrect username or password"}), 401
@@ -48,7 +50,7 @@ def signup():
     except Exception as e:
         db.session.rollback()
         return jsonify({"message": str(e)}), 400
-
+    session['name'] = username
     return jsonify({"username": username}), 201
 
 # Create Recipe
@@ -87,6 +89,8 @@ def create_recipe():
 # Get all recipes
 @app.route("/recipes", methods=["GET"])
 def get_all_recipes():
+    if not session.get('name'):
+        return jsonify({"messege" : "not logged in"}), 401
     try:
         recipes = Recipe.query.all()
         result = [

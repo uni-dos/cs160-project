@@ -31,7 +31,7 @@
            return{ items : <Recipe_Result[]>[] }
         },
         async mounted() {
-            await axios.get('http://localhost:5000/recipes')
+            await axios.get('/recipes')
             .then(response => {
                 
                 if (response.status === 200) {
@@ -41,6 +41,9 @@
                 }
                 else if (response.status === 303) {
                     // no posts
+                } else if (response.status === 401) {
+                    // user not logged in
+                    this.$router.push('/login');
                 }
             })
             .catch(error => {
