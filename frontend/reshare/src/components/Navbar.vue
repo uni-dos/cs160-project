@@ -7,7 +7,7 @@
         <Button label="Create" icon="pi pi-pen-to-square" @click="emitClicked('create')"></Button>
       </ul>
       <ul class="right-links">
-        <SplitButton label="Profile" icon="pi pi-user" @click="emitClicked('profile')" :model="logout"></SplitButton>
+        <SplitButton icon="pi pi-user" @click="emitClicked('profile')" :model="logout"><label>{{ $route.params.username }}</label></SplitButton>
         
       </ul>
     </div>
@@ -27,7 +27,7 @@ export default {
       .catch(error => {
         console.log(error);
       });
-      console.log("Logout")}}]}; 
+      }}]}; 
   },
   methods: {
     emitClicked(buttonPressed : string) {
@@ -38,6 +38,12 @@ export default {
       }
     },
   },
+  props : {
+    user : {
+      type : String,
+      default : "user"
+    }
+  }
 };
 </script>
 

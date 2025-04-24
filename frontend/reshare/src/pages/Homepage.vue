@@ -1,7 +1,5 @@
 <template>
     <Navbar />
-    <!-- Might need to be the username -->
-     <h1>{{ $route.params.username }}</h1>
 
     <div class="row">
         <Recipe v-for="r in items" 
@@ -36,7 +34,7 @@
                 
                 if (response.status === 200) {
                     // we got at least 1 post
-                    console.log("Mounted")
+                    console.log("Mounted");
                     this.items = response.data;
                 }
                 else if (response.status === 303) {
