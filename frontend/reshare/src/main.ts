@@ -30,8 +30,9 @@ const routes = [
     {path: '/', component: MainPage},
     {path: '/login', component: Login},
     {path: '/signup', component: Signup},
-    {path: '/:username/homepage', component: Homepage},
-    {path: '/:username/create', component: CreateRecipe}
+    {path: '/:username', children : [{path : 'homepage', component: Homepage}, {path : 'create', component : CreateRecipe}] }, 
+    // {path: '/:username/homepage', component: Homepage},
+    // {path: '/:username/create', component: CreateRecipe}
 ];
 
 const router = createRouter({

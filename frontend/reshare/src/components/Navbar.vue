@@ -1,7 +1,7 @@
 <template>
     <div class="header">
       <ul class="left-links">
-        <Button><IcOrganicFood/><label>Rehare</label></Button>
+        <Button @click="emitClicked('logo')"><IcOrganicFood/><label>Rehare</label></Button>
         <Button label="Following" icon="pi pi-users" @click="emitClicked('following')"></Button>
         <Button label="Bookmarks" icon="pi pi-bookmark" @click="emitClicked('bookmarks')"></Button>
         <Button label="Create" icon="pi pi-pen-to-square" @click="emitClicked('create')"></Button>
@@ -31,8 +31,11 @@ export default {
   },
   methods: {
     emitClicked(buttonPressed : string) {
-      console.log(buttonPressed);
-      this.$emit(buttonPressed);
+      if (buttonPressed === "create") {
+        this.$router.push('create');
+      } else if (buttonPressed === 'logo') {
+        this.$router.push('homepage');
+      }
     },
   },
 };
