@@ -4,6 +4,7 @@ from config import app, db
 from models import User, Recipe, Follow  # import all used models
 from bcrypt import hashpw, checkpw, gensalt
 from sqlalchemy import text, select
+from datetime import datetime
 
 @app.route("/")
 def home():
@@ -64,26 +65,40 @@ def create_recipe():
     time = data.get("time")
     servings = data.get("servings")
     author_username = data.get("author_username")
+    ingredients = data.get("ingredients")
 
-    if not (title and steps and author_username):
+    if not (title and short_description and steps and time and servings and author_username and ingredients):
         return jsonify({"message": "Missing required fields"}), 400
+    
+    time = time["hours"] * 60 + time["mins"] # convert time to total minutes
+    publish_date = datetime.now()
 
-    new_recipe = Recipe(
-        title=title,
-        short_description=short_description,
-        steps=steps,
-        time=time,
-        servings=servings,
-        author_username=author_username,
-        sustainability_rating=0,
-        average_rating=0
-    )
+    ingredients_list = []
+    for ingredient in ingredients:
+        ingredients_list.append((ingredient["ingredient_name"], ingredient["amount"], ingredient["weight"]))
 
     try:
-        db.session.add(new_recipe)
+        recipe_insert = text("""
+                             INSERT INTO recipe (author_username, publish_date, title, short_description, steps, time, servings)
+                             VALUES (:author_username, :publish_date, :title, :short_description, :steps, :time, :servings)
+                             """)
+        result = db.session.execute(recipe_insert, {"author_username": author_username, "publish_date": publish_date, "title": title, "short_description": short_description,
+                                           "steps": steps, "time": time, "servings": servings})
+        
+        recipe_id = result.lastrowid
+        
+        contains_ingredient_insert = text("""
+                                          INSERT INTO contains_ingredient (recipe_id, ingredient_name, amount, weight)
+                                          VALUES (:recipe_id, :ingredient_name, :amount, :weight)
+                                          """)
+        
+        for ingredient in ingredients_list:
+            db.session.execute(contains_ingredient_insert, {"recipe_id": recipe_id, "ingredient_name": ingredient[0], "amount": ingredient[1], "weight": ingredient[2]})
+        
         db.session.commit()
-        return jsonify({"message": "Recipe created!"}), 201
+        return jsonify({"message": "Recipe created!", "recipe_id": recipe_id}), 201
     except Exception as e:
+        db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
 # Get all recipes
@@ -229,6 +244,125 @@ def unlike_recipe():
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+    
+# get num likes
+@app.route("/get-num-likes/<recipe_id>", methods=["GET"])
+def get_num_likes(recipe_id):
+    try:
+        sql = text("SELECT COUNT(*) FROM likes WHERE recipe_id = :recipe_id")
+        num_likes = db.session.execute(sql, {"recipe_id": recipe_id}).scalar()
+        return jsonify({"recipe_id": recipe_id, "num_likes": num_likes}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 400
+
+# get liked recipes
+@app.route("/get-likes/<username>", methods=["GET"])
+def get_likes(username):
+    if not username:
+        return jsonify({"message": "Missing fields"}), 400
+    
+    try:
+        sql = text("""
+                    SELECT recipe.*
+                    FROM recipe
+                    JOIN likes ON recipe.recipe_id = likes.recipe_id
+                    WHERE likes.username = :username
+                   """)
+        result = db.session.execute(sql, {"username": username})
+        likes = [
+            {
+                "recipe_id": row.recipe_id,
+                "author_username": row.author_username,
+                "publish_date": row.publish_date,
+                "title": row.title,
+                "short_description": row.short_description,
+                "steps": row.steps,
+                "time": row.time,
+                "servings": row.servings,
+                "sustainability_rating": row.sustainability_rating,
+                "average_rating": row.average_rating
+            }
+            for row in result
+        ]
+        return jsonify({"username": username, "likes": likes}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+# create bookmark
+@app.route("/bookmark", methods=["POST"])
+def bookmark():
+    recipe_id = request.json.get("recipe_id")
+    username = request.json.get("username")
+
+    if not (recipe_id or username):
+        return jsonify({"message": "Missing fields"}), 400
+    
+    try:
+        sql = text("""
+                    INSERT INTO bookmark (recipe_id, username)
+                    VALUES (:recipe_id, :username)
+                   """)
+        db.session.execute(sql, {"recipe_id": recipe_id, "username": username})
+        db.session.commit()
+        return jsonify({"recipe_id": recipe_id, "username": username}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": str(e)}), 400
+
+# unbookmark
+@app.route("/unbookmark", methods=["DELETE"])
+def unbookmark():
+    recipe_id = request.json.get("recipe_id")
+    username = request.json.get("username")
+
+    if not (recipe_id or username):
+        return jsonify({"message": "Missing fields"}), 400
+    
+    try:
+        sql = text("""
+                    DELETE FROM bookmark
+                    WHERE recipe_id = :recipe_id AND username = :username
+                   """)
+        db.session.execute(sql, {"recipe_id": recipe_id, "username": username})
+        db.session.commit()
+        return jsonify({"recipe_id": recipe_id, "username": username}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": str(e)}), 400
+
+# get bookmarked recipes /////// return the recipes themselves
+@app.route("/get-bookmarks/<username>", methods=["GET"])
+def get_bookmarks(username):
+    if not username:
+        return jsonify({"message": "Missing fields"}), 400
+    
+    try:
+        sql = text("""
+                    SELECT recipe.*
+                    FROM recipe
+                    JOIN bookmark ON recipe.recipe_id = bookmark.recipe_id
+                    WHERE bookmark.username = :username
+                   """)
+        result = db.session.execute(sql, {"username": username})
+        bookmarks = [
+            {
+                "recipe_id": row.recipe_id,
+                "author_username": row.author_username,
+                "publish_date": row.publish_date,
+                "title": row.title,
+                "short_description": row.short_description,
+                "steps": row.steps,
+                "time": row.time,
+                "servings": row.servings,
+                "sustainability_rating": row.sustainability_rating,
+                "average_rating": row.average_rating
+            }
+            for row in result
+        ]
+        return jsonify({"username": username, "bookmarks": bookmarks}), 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 400
 
 #comment
 @app.route("/comment", methods=["POST"])
@@ -325,6 +459,42 @@ def get_followers(username):
 def logout():
     session.clear()
     return jsonify({"message" : "logged out"}), 200
+
+# search (FULLTEXT index added to recipe(title, short_description, steps) columns a
+@app.route("/search", methods=["GET"])
+def search_recipes():
+    search_term = request.json.get("search_term")
+
+    if not search_term:
+        return jsonify({"message": "Invalid data"}), 400
+    
+    try:
+        sql = text("""
+                    SELECT DISTINCT recipe.recipe_id, recipe.author_username, recipe.publish_date, recipe.title,
+                                    recipe.short_description, recipe.steps, recipe.time, recipe.servings,
+                                    recipe.sustainability_rating, recipe.average_rating
+                    FROM recipe
+                    WHERE MATCH(recipe.title, recipe.short_description, recipe.steps) AGAINST(:search_term in NATURAL LANGUAGE MODE)
+                   """)
+        result = db.session.execute(sql, {"search_term": search_term})
+        search_results = [
+            {
+                "recipe_id": row.recipe_id,
+                "author_username": row.author_username,
+                "publish_date": row.publish_date,
+                "title": row.title,
+                "short_description": row.short_description,
+                "steps": row.steps,
+                "time": row.time,
+                "servings": row.servings,
+                "sustainability_rating": row.sustainability_rating,
+                "average_rating": row.average_rating
+            }
+            for row in result
+        ]
+        return jsonify({"search_results": search_results}), 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 400
     
 # Run Flask app
 if __name__ == "__main__":
