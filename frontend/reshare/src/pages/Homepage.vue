@@ -14,6 +14,12 @@
 
 <script lang="ts">
     import axios from 'axios'
+
+    interface Ingredient {
+        ingredient_name: String,
+        amount: Number,
+        weight: String
+    }
     
     interface Recipe_Result {
         recipe_id : Number,
@@ -24,7 +30,8 @@
         servings : Number,
         author_username : String,
         sustainability_rating : Number,
-        average_rating : Number
+        average_rating : Number,
+        ingredients: Ingredient[]
     }
     export default {
         data () {
