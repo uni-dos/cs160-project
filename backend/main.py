@@ -107,22 +107,56 @@ def get_all_recipes():
     if not session.get('name'):
         return jsonify({"messege" : "not logged in"}), 401
     try:
-        recipes = Recipe.query.all()
-        result = [
-            {
-                "recipe_id": r.recipe_id,
-                "title": r.title,
-                "short_description": r.short_description,
-                "steps": r.steps,
-                "time": r.time,
-                "servings": r.servings,
-                "author_username": r.author_username,
-                "sustainability_rating": r.sustainability_rating,
-                "average_rating": r.average_rating,
-            }
-            for r in recipes
-        ]
-        return jsonify(result), 200
+        sql = text("""
+                   SELECT r.recipe_id, r.author_username, r.publish_date, r.title, r.short_description, r.steps, r.time, r.servings, r.sustainability_rating, r.average_rating, i.ingredient_name, i.amount, i.weight
+                   FROM recipe AS r
+                   JOIN contains_ingredient as i
+                   ON r.recipe_id = i.recipe_id
+                   """)
+        
+        result = db.session.execute(sql).fetchall()
+
+        # convert Row objects to dictionaries
+        rows = [row._mapping for row in result]
+
+        recipes_dict = {}
+        for row in rows:
+            recipe_id = row["recipe_id"]
+            if recipe_id not in recipes_dict:
+                # reformat time (total mins) to hrs and mins
+                hours = row["time"] // 60
+                mins = row["time"] % 60
+                if hours > 0 and mins > 0:
+                    time = f"{hours} hr and {mins} min"
+                elif hours > 0 and mins == 0:
+                    time = f"{hours} hr"
+                else:
+                    time = f"{mins} min"
+                
+                average_rating = row["average_rating"] if row["average_rating"] is not None else "N/A"
+
+                recipes_dict[recipe_id] = {
+                    "recipe_id": recipe_id,
+                    "author_username": row["author_username"],
+                    "publish_date": row["publish_date"],
+                    "title": row["title"],
+                    "short_description": row["short_description"],
+                    "steps": row["steps"],
+                    "time": time,
+                    "servings": row["servings"],
+                    "sustainability_rating": row["sustainability_rating"],
+                    "average_rating": average_rating,
+                    "ingredients": []
+                }
+            recipes_dict[recipe_id]["ingredients"].append({
+                "ingredient_name": row["ingredient_name"],
+                "amount": row["amount"],
+                "weight": row["weight"]
+            })
+
+        recipes_list = list(recipes_dict.values())
+        print(recipes_list)
+        return jsonify(recipes_list), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
