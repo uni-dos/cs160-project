@@ -59,8 +59,8 @@
                 <div v-for="(ingredient, index) in ingredients" :key="index" class="ingredient-entry">
                     <div class="ingredient-row">
                         <FloatLabel variant="on">
-                            <InputText id="ingredient" v-model="ingredients[index]" variant="filled" size="large" :invalid="invalidFields.ingredients[index]" @input="invalidFields.ingredients[index]=false"/>
-                            <label for="ingredient">Ingredient {{  index + 1 }}</label>
+                            <AutoComplete v-model="ingredients[index]" inputId="ingredientsSuggestions" dropdown :suggestions="ingredientsSuggestions" @complete="search" variant="filled" size="large" forceSelection @keydown.enter.prevent :invalid="invalidFields.ingredients[index]" @input="invalidFields.ingredients[index]=false" ></AutoComplete>
+                            <label for="ingredientsSuggestions">Ingredient {{ index + 1 }}</label>
                         </FloatLabel>
                         <FloatLabel variant="on">
                             <InputNumber class="ingredientAmount" inputId="amount" v-model="selectedAmounts[index]" fluid variant="filled" size="large" :min="0" :minFractionDigits="0" :maxFractionDigits="2" showButtons :step="0.25" :invalid="invalidFields.selectedAmounts[index]" @input="invalidFields.selectedAmounts[index]=false"/>
@@ -83,6 +83,7 @@
 </template>
 
 <script lang="ts">
+    import ingredientsData from '../data/ingredients.json';
     import axios from 'axios';
     export default {
             data () {
@@ -107,7 +108,8 @@
                     { label: "Pints (pt)", value: "pt"},
                     { label: "Quarts (qt)", value: "qt"},
                     { label: "Gallons (gal)", value: "gal"},
-                    { label: "Fluid Ounces (floz)", value: "floz"}
+                    { label: "Fluid Ounces (floz)", value: "floz"},
+                    { label: "Quantity (qty)", value: "qty"}
                 ],
                 selectedAmounts: [null],
                 selectedWeights: [""],
@@ -122,7 +124,9 @@
                     ingredients: [] as boolean[],
                     selectedAmounts: [] as boolean[],
                     selectedWeights: [] as boolean[]
-                }
+                },
+                ingredientsData: ingredientsData,
+                ingredientsSuggestions: [] as string[]
              }
             },
             async mounted() {
@@ -234,7 +238,8 @@
                     }
 
                     this.ingredients.forEach((ingredient, index) => {
-                        if (!ingredient.trim()) {
+                        console.log(ingredient);
+                        if (!ingredient || !ingredient.trim()) {
                             this.invalidFields.ingredients[index] = true;
                             isValid = false;
                         } else {
@@ -243,6 +248,7 @@
                     });
 
                     this.selectedAmounts.forEach((amount, index) => {
+                        console.log(amount);
                         if (!amount || !(amount > 0)) {
                             this.invalidFields.selectedAmounts[index] = true;
                             isValid = false;
@@ -252,6 +258,7 @@
                     });
 
                     this.selectedWeights.forEach((weight, index) => {
+                        console.log(weight);
                         if (!weight) {
                             this.invalidFields.selectedWeights[index] = true;
                             isValid = false;
@@ -261,6 +268,13 @@
                     });
 
                     return isValid;
+                },
+                search(event: {query: string}) {
+                    const query = event.query.toLowerCase();
+                    const maxItems = 10;
+                    this.ingredientsSuggestions = this.ingredientsData.filter(ingredient => ingredient.ingredient_name.toLowerCase().includes(query))
+                                                        .slice(0, maxItems)
+                                                        .map((ingredient) => ingredient.ingredient_name);
                 }
             }
         }
