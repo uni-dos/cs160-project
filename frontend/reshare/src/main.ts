@@ -6,7 +6,7 @@ import { Button, InputText, Message, Password, FloatLabel, Card, Divider, SplitB
 
 // for icons 
 import 'primeicons/primeicons.css'
-import { IcOrganicFood } from '@kalimahapps/vue-icons';
+import { IcOrganicFood, BxBowlHot} from '@kalimahapps/vue-icons';
 
 // custom component
 import Navbar from './components/Navbar.vue';
@@ -65,4 +65,5 @@ app.component('InputIcon', InputIcon)
 app.component('IconField', IconField)
 app.component('Select', Select)
 app.component('AutoComplete', AutoComplete)
+app.component('BxBowlHot', BxBowlHot);
 app.mount('#app');

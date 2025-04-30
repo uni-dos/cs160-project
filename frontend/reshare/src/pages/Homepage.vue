@@ -5,32 +5,15 @@
         <Recipe v-for="r in items" 
             :key="r.recipe_id" :title="r.title"
             :user="r.author_username" :steps="r.steps" :desc="r.short_description" 
-            :rating="r.sustainability_rating" :servings="r.servings"/>
+            :rating="r.sustainability_rating" :servings="r.servings" :time="r.time" :average_rating="r.average_rating" :ingredients="r.ingredients"/>
         
         </div>
 </template>
 
 <script lang="ts">
     import axios from 'axios'
-
-    interface Ingredient {
-        ingredient_name: String,
-        amount: Number,
-        weight: String
-    }
+    import { type Recipe_Result } from '../data/Ingredient'
     
-    interface Recipe_Result {
-        recipe_id : Number,
-        title : String,
-        short_description : String,
-        steps : String,
-        time : String,
-        servings : Number,
-        author_username : String,
-        sustainability_rating : Number,
-        average_rating : Number,
-        ingredients: Ingredient[]
-    }
     export default {
         data () {
            return{ items : <Recipe_Result[]>[] }

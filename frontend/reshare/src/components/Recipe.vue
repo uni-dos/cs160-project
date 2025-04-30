@@ -1,18 +1,29 @@
 <template>
     <Card style="width: max-content; overflow: hidden">
         <template #title>{{title}}</template>
-        <template #subtitle> By {{ user }}  <p>{{ desc }}</p></template>
-        <template #content>
+        <template #subtitle>
+        <div class="col">
+            <Message variant="simple"> By {{ user }}</Message>
+            <Message variant="simple" severity="secondary"> {{ desc }}</Message>
+       
+            <Message icon="pi pi-clock" variant="simple">{{ time }} </Message>
+        
+            <Message variant="simple"> <BxBowlHot/> Servings {{ servings }} </Message>
 
-            <p class="m-0">Servings {{ servings }}</p>
-            <p class="m-0">
+            <Message v-for="(i, index) in ingredients" :key="index"> {{ index + 1 }}: {{ i.amount }}{{ i.weight }} {{ i.ingredient_name }} </Message> 
+            
+        </div> 
+      
+        </template>
+        <template #content>
+            <Message variant="simple" severity="contrast">
                 {{ steps }}
-            </p>
+            </Message>
 
         </template>
         <template #footer>
             <div class="row">
-                <Button severity="secondary" outlined class="w-full"> Sustainability: {{ rating }}</Button>
+                <Message severity="secondary" variant="outlined" class="w-full"> Sustainability: {{ rating }}</Message>
                 <Button severity="info" outlined class="w-full" icon="pi pi-sparkles" label="Rate"></Button>
             </div>
         </template>
@@ -20,6 +31,7 @@
 </template>
 
 <script lang="ts">
+import { type Ingredient } from '../data/Ingredient'
 export default {
     props : {
         user : {
@@ -45,6 +57,13 @@ export default {
         servings : {
             type : Number,
             default: 2
+        },
+        time : {
+            type : String,
+            default : ""
+        },
+        ingredients : {
+            type : Array<Ingredient>,
         }
     }
 }
@@ -56,5 +75,10 @@ export default {
     display: flex;
     grid-auto-flow: row;
     gap: 10px;
+}
+.col {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
 }
 </style>
