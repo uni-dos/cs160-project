@@ -476,29 +476,22 @@ def search_recipes():
     
     try:
         sql = text("""
-                    SELECT DISTINCT recipe.recipe_id, recipe.author_username, recipe.publish_date, recipe.title,
-                                    recipe.short_description, recipe.steps, recipe.time, recipe.servings,
-                                    recipe.sustainability_rating, recipe.average_rating
-                    FROM recipe
-                    WHERE MATCH(recipe.title, recipe.short_description, recipe.steps) AGAINST(:search_term in NATURAL LANGUAGE MODE)
+                    SELECT DISTINCT r.recipe_id, r.author_username, r.publish_date, r.title,
+                                    r.short_description, r.steps, r.time, r.servings,
+                                    r.sustainability_rating, r.average_rating,
+                                    i.ingredient_name, i.amount, i.weight
+                    FROM recipe AS r
+                    JOIN contains_ingredient AS i ON r.recipe_id = i.recipe_id
+                    WHERE MATCH(r.title, r.short_description, r.steps) AGAINST(:search_term in NATURAL LANGUAGE MODE)
                    """)
-        result = db.session.execute(sql, {"search_term": search_term})
-        search_results = [
-            {
-                "recipe_id": row.recipe_id,
-                "author_username": row.author_username,
-                "publish_date": row.publish_date,
-                "title": row.title,
-                "short_description": row.short_description,
-                "steps": row.steps,
-                "time": row.time,
-                "servings": row.servings,
-                "sustainability_rating": row.sustainability_rating,
-                "average_rating": row.average_rating
-            }
-            for row in result
-        ]
-        return jsonify({"search_results": search_results}), 200
+        result = db.session.execute(sql, {"search_term": search_term}).fetchall()
+        # convert Row objects to dictionaries
+        rows = [row._mapping for row in result]
+
+        recipes_dict = recipes_to_dict(rows)
+
+        recipes_list = list(recipes_dict.values())
+        return jsonify({"search_results": recipes_list}), 200
     except Exception as e:
         return jsonify({"message": str(e)}), 400
 
