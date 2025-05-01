@@ -119,67 +119,41 @@ def get_all_recipes():
         # convert Row objects to dictionaries
         rows = [row._mapping for row in result]
 
-        recipes_dict = {}
-        for row in rows:
-            recipe_id = row["recipe_id"]
-            if recipe_id not in recipes_dict:
-                # reformat time (total mins) to hrs and mins
-                hours = row["time"] // 60
-                mins = row["time"] % 60
-                if hours > 0 and mins > 0:
-                    time = f"{hours} hr and {mins} min"
-                elif hours > 0 and mins == 0:
-                    time = f"{hours} hr"
-                else:
-                    time = f"{mins} min"
-                
-                average_rating = row["average_rating"] if row["average_rating"] is not None else "N/A"
-
-                recipes_dict[recipe_id] = {
-                    "recipe_id": recipe_id,
-                    "author_username": row["author_username"],
-                    "publish_date": row["publish_date"],
-                    "title": row["title"],
-                    "short_description": row["short_description"],
-                    "steps": row["steps"],
-                    "time": time,
-                    "servings": row["servings"],
-                    "sustainability_rating": row["sustainability_rating"],
-                    "average_rating": average_rating,
-                    "ingredients": []
-                }
-            recipes_dict[recipe_id]["ingredients"].append({
-                "ingredient_name": row["ingredient_name"],
-                "amount": row["amount"],
-                "weight": row["weight"]
-            })
+        recipes_dict = recipes_to_dict(rows)
 
         recipes_list = list(recipes_dict.values())
-        print(recipes_list)
         return jsonify(recipes_list), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Get recipes by username
-@app.route("/recipes/<username>", methods=["GET"])
-def get_user_recipes(username):
+# Get user details (info and recipes)
+@app.route("/user/<username>", methods=["GET"])
+def get_user_details(username):
     try:
-        recipes = Recipe.query.filter_by(author_username=username).all()
-        result = [
-            {
-                "recipe_id": r.recipe_id,
-                "title": r.title,
-                "short_description": r.short_description,
-                "steps": r.steps,
-                "time": r.time,
-                "servings": r.servings,
-                "author_username": r.author_username,
-                "sustainability_rating": r.sustainability_rating,
-                "average_rating": r.average_rating,
-            }
-            for r in recipes
-        ]
-        return jsonify(result), 200
+        user_query = text("""
+                           SELECT password, bio
+                           FROM user
+                           WHERE user.username = :username
+                           """)
+        
+        user_result = db.session.execute(user_query, {"username": username}).fetchone()
+        hashed_password, bio = user_result
+
+        recipes_query = text("""
+                             SELECT r.recipe_id, r.author_username, r.publish_date, r.title, r.short_description, r.steps, r.time, r.servings, r.sustainability_rating, r.average_rating, i.ingredient_name, i.amount, i.weight
+                             FROM recipe AS r
+                             JOIN contains_ingredient as i
+                             ON r.recipe_id = i.recipe_id
+                             WHERE r.author_username = :username
+                             """)
+        
+        recipes_result = db.session.execute(recipes_query, {"username": username}).fetchall()
+        # convert Row objects to dictionaries
+        recipe_rows = [row._mapping for row in recipes_result]
+
+        recipes_dict = recipes_to_dict(recipe_rows)
+        recipes_list = list(recipes_dict.values())
+        return jsonify({"username": username, "password": hashed_password, "bio": bio, "recipes": recipes_list}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -529,6 +503,45 @@ def search_recipes():
         return jsonify({"search_results": search_results}), 200
     except Exception as e:
         return jsonify({"message": str(e)}), 400
+
+def recipes_to_dict(rows):
+    recipes_dict = {}
+    for row in rows:
+        recipe_id = row["recipe_id"]
+        if recipe_id not in recipes_dict:
+            # reformat time (total mins) to hrs and mins
+            hours = row["time"] // 60
+            mins = row["time"] % 60
+            if hours > 0 and mins > 0:
+                time = f"{hours} hr and {mins} min"
+            elif hours > 0 and mins == 0:
+                time = f"{hours} hr"
+            else:
+                time = f"{mins} min"
+            
+            average_rating = row["average_rating"] if row["average_rating"] is not None else "N/A"
+
+            recipes_dict[recipe_id] = {
+                "recipe_id": recipe_id,
+                "author_username": row["author_username"],
+                "publish_date": row["publish_date"],
+                "title": row["title"],
+                "short_description": row["short_description"],
+                "steps": row["steps"],
+                "time": time,
+                "servings": row["servings"],
+                "sustainability_rating": row["sustainability_rating"],
+                "average_rating": average_rating,
+                "ingredients": []
+            }
+        recipes_dict[recipe_id]["ingredients"].append({
+            "ingredient_name": row["ingredient_name"],
+            "amount": row["amount"],
+            "weight": row["weight"]
+        })
+
+    return recipes_dict
+
     
 # Run Flask app
 if __name__ == "__main__":
