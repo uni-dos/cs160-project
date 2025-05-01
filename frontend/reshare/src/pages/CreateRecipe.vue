@@ -216,14 +216,14 @@
                         }
                     });
 
-                    if (!this.hours) {
+                    if (this.hours === null || this.hours < 0) {
                         this.invalidFields.hours = true;
                         isValid = false;
                     } else {
                         this.invalidFields.hours = false;
                     }
 
-                    if (!this.mins) {
+                    if (this.mins === null || this.mins < 0) {
                         this.invalidFields.minutes = true;
                         isValid = false;
                     } else {
