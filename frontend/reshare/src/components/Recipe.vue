@@ -1,5 +1,5 @@
 <template>
-    <Card style="width: max-content; overflow: hidden">
+    <Card style="width: min-content; height: 490px; overflow: auto;">
         <template #title>{{title}}</template>
         <template #subtitle>
             <Divider />

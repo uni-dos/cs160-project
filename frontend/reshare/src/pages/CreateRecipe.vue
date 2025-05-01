@@ -148,7 +148,7 @@
                     }));
 
                     const payload = {
-                        author_username: "arden",
+                        author_username: this.$route.params.username,
                         title: this.title,
                         short_description: this.short_description,
                         steps: formattedSteps,
