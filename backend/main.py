@@ -19,6 +19,7 @@ def login():
     if not username or not password:
         return jsonify({"message": "No username"}), 400
     
+    username = username.lower()
     user = User.query.filter_by(username=username).first()
     if not user:
         return jsonify({"message": "Incorrect username or password"}), 404
@@ -38,6 +39,7 @@ def signup():
     if not username or not password:
         return jsonify({"message": "No username or password"}), 400
     
+    username = username.lower()
     hashed_password = hashpw(password.encode("utf-8"), gensalt())
 
     try:
@@ -160,7 +162,7 @@ def get_user_details(username):
         return jsonify({"error": str(e)}), 500
 
 
-#rate
+#rate (recipe title and user to find recipe then insert the rate and return the updated average rating that is triggered)
 @app.route("/rate", methods=["POST"])
 def rate_recipe():
     data = request.get_json()
