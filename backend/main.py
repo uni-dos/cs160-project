@@ -74,10 +74,31 @@ def create_recipe():
     
     time = time["hours"] * 60 + time["mins"] # convert time to total minutes
     publish_date = datetime.now()
+    
+    total_sustainability_score = 0 # in grams of CO2 equivalent per serving
 
-    ingredients_list = []
-    for ingredient in ingredients:
-        ingredients_list.append((ingredient["ingredient_name"], ingredient["amount"], ingredient["weight"]))
+    def convert_to_grams(amount, unit, density=1.0):
+        conversion_rates = {
+            # weight based conversions
+            "g": 1,
+            "kg": 1000,
+            "lb": 453.592,
+            "oz": 28.3495,
+
+            # volume based conversions
+            "l": 1000 * density,
+            "ml": 1 * density,
+            "tbsp": 15 * density,
+            "tsp": 5 * density,
+            "cup": 240 * density,
+            "pt": 473.176 * density,
+            "qt": 946.353 * density,
+            "gal": 3785.41 * density,
+            "floz": 29.5735 * density,
+
+            "qty": 100
+        }
+        return amount * conversion_rates.get(unit, 1)
 
     try:
         recipe_insert = text("""
@@ -93,12 +114,39 @@ def create_recipe():
                                           INSERT INTO contains_ingredient (recipe_id, ingredient_name, amount, weight)
                                           VALUES (:recipe_id, :ingredient_name, :amount, :weight)
                                           """)
+
+        for ingredient in ingredients:
+            ingredient_name = ingredient["ingredient_name"]
+            amount = ingredient["amount"]
+            weight = ingredient["weight"]
+
+            sustainability_query = text("""
+                                        SELECT sustainability_score FROM ingredient
+                                        WHERE ingredient_name = :ingredient_name
+                                        """)
+            sustainability_result = db.session.execute(sustainability_query, {"ingredient_name": ingredient_name}).fetchone()
+
+            if sustainability_result:
+                score_per_gram = sustainability_result[0]
+                # need to convert the score (grams) to the ingredients weight
+                weight_in_grams = convert_to_grams(amount, weight)
+                ingredient_score = score_per_gram * weight_in_grams
+                total_sustainability_score += ingredient_score
+
+                db.session.execute(contains_ingredient_insert, {"recipe_id": recipe_id, "ingredient_name": ingredient_name, "amount": amount, "weight": weight})
+            else:
+                return jsonify({"message": f"Sustainability score does not exist for ingredient: {ingredient_name}"}), 400
         
-        for ingredient in ingredients_list:
-            db.session.execute(contains_ingredient_insert, {"recipe_id": recipe_id, "ingredient_name": ingredient[0], "amount": ingredient[1], "weight": ingredient[2]})
+        recipe_update = text("""
+                             UPDATE recipe
+                             SET sustainability_rating = :sustainability_rating
+                             WHERE recipe_id = :recipe_id
+                             """)
+        # divide the total sustainability score by 1000 to get it in kg CO2
+        db.session.execute(recipe_update, {"sustainability_rating": round(total_sustainability_score / 1000, 2), "recipe_id": recipe_id})
         
         db.session.commit()
-        return jsonify({"message": "Recipe created!", "recipe_id": recipe_id}), 201
+        return jsonify({"message": "Recipe created!", "recipe_id": recipe_id, "sustainability_rating": total_sustainability_score}), 201
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
