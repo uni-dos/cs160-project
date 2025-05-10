@@ -22,6 +22,9 @@ import MainPage from './pages/MainPage.vue'
 import Homepage from './pages/Homepage.vue'
 import axios from 'axios'
 import CreateRecipe from './pages/CreateRecipe.vue'
+import Profile from './pages/Profile.vue'
+import Bookmarks from './pages/Bookmarks.vue'
+import SearchPage from './pages/SearchPage.vue'
 
 axios.defaults.withCredentials = true;
 axios.defaults.baseURL = 'http://localhost:5000';
@@ -30,7 +33,9 @@ const routes = [
     {path: '/', component: MainPage},
     {path: '/login', component: Login},
     {path: '/signup', component: Signup},
-    {path: '/:username', children : [{path : 'homepage', component: Homepage}, {path : 'create', component : CreateRecipe}] }, 
+    {path: '/search/:searchQuery', component: SearchPage},
+    {path: '/:username', children : [{path : 'homepage', component: Homepage}, {path : 'create', component : CreateRecipe}, 
+                                     {path : 'profile', component: Profile}, {path : 'bookmarks', component: Bookmarks}] },
 ];
 
 const router = createRouter({
