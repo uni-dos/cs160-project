@@ -32,7 +32,7 @@
        
         <template #footer>
             <div class="row">
-                <Message severity="secondary" variant="outlined" class="w-full"> Sustainability: {{ rating }}</Message>
+                <Message severity="secondary" variant="outlined" class="w-full"> Sustainability: {{ rating }} kgCO&#8322;e</Message>
                 <Button severity="info" class="w-full" icon="pi pi-sparkles" label="Rate" ></Button>
             </div>
         </template>

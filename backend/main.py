@@ -564,7 +564,7 @@ def recipes_to_dict(rows):
 
             recipes_dict[recipe_id] = {
                 "recipe_id": recipe_id,
-                "author_username": row["author_username"],
+                "author_username": row["author_username"].lower(),
                 "publish_date": row["publish_date"],
                 "title": row["title"],
                 "short_description": row["short_description"],
