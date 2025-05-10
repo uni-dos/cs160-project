@@ -28,7 +28,7 @@ export default {
         {
           label: "Profile",
           command: async() => {
-            
+            this.$router.push('profile');
           }
         },
         {
