@@ -2,7 +2,6 @@
     <div class="header">
       <ul class="left-links">
         <Button @click="emitClicked('logo')"><IcOrganicFood/><label>Reshare</label></Button>
-        <Button label="Following" icon="pi pi-users" @click="emitClicked('following')"></Button>
         <Button label="Bookmarks" icon="pi pi-bookmark" @click="emitClicked('bookmarks')"></Button>
         <Button label="Create" icon="pi pi-pen-to-square" @click="emitClicked('create')"></Button>
         <div class="search-container">
@@ -13,7 +12,7 @@
         </div>
       </ul>
       <ul class="right-links">
-        <SplitButton icon="pi pi-user" @click="emitClicked('profile')" :model="logout"><label>{{ $route.params.username }}</label></SplitButton>
+        <SplitButton icon="pi pi-user" @click="emitClicked('profile')" :model="items"><label>{{ $route.params.username }}</label></SplitButton>
         
       </ul>
     </div>
@@ -25,17 +24,29 @@ export default {
   data () {
     return {
       searchQuery: '',
-      logout : [{label : "Logout", command: async () => {
-      await axios.post('/logout')
-      .then (response => {
-        if (response.status === 200) {
-          this.$router.push('/');
+      items : [
+        {
+          label: "Profile",
+          command: async() => {
+            
+          }
+        },
+        {
+          label: "Logout",
+          command: async () => {
+            await axios.post('/logout')
+            .then (response => {
+              if (response.status === 200) {
+                this.$router.push('/');
+              }
+            })
+            .catch(error => {
+              console.log(error);
+            });
+          }
         }
-      })
-      .catch(error => {
-        console.log(error);
-      });
-      }}]}; 
+      ],
+    }; 
   },
   methods: {
     emitClicked(buttonPressed : string) {
@@ -43,11 +54,16 @@ export default {
         this.$router.push('create');
       } else if (buttonPressed === 'logo') {
         this.$router.push('homepage');
+      } else if (buttonPressed === 'bookmarks') {
+        this.$router.push('bookmarks')
       }
     },
     handleSearch() {
-      console.log("Searching for: ", this.searchQuery);
-      this.searchQuery = '';
+      if (this.searchQuery.trim() !== "") {
+        const sanitizedQuery = encodeURIComponent(this.searchQuery.trim());
+        this.$router.push({path: 'search', query: {q : sanitizedQuery}});
+        this.searchQuery = '';
+      }
     }
   },
   props : {

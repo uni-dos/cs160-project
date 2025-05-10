@@ -517,10 +517,8 @@ def logout():
     return jsonify({"message" : "logged out"}), 200
 
 # search (FULLTEXT index added to recipe(title, short_description, steps) columns a
-@app.route("/search", methods=["GET"])
-def search_recipes():
-    search_term = request.json.get("search_term")
-
+@app.route("/search/<search_term>", methods=["GET"])
+def search_recipes(search_term):
     if not search_term:
         return jsonify({"message": "Invalid data"}), 400
     
