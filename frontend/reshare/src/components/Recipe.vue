@@ -4,7 +4,9 @@
         <template #subtitle>
             <Divider />
         <div class="col">
-            <Message variant="simple" severity="success"> By {{ user }}</Message>
+            <Message variant="simple" severity="success">
+                By <router-link :to="`/${user}/profile`" class="profile-link">@{{ user }}</router-link>
+            </Message>
             <Message variant="simple" severity="secondary"> {{ desc }}</Message>
        
             <Message icon="pi pi-clock" variant="simple">{{ time }} </Message>
@@ -89,5 +91,13 @@ export default {
     display: flex;
     flex-direction: column;
     row-gap: 12px;
+}
+.profile-link {
+    text-decoration: none;
+    color: inherit;
+    font-weight: bold;
+}
+.profile-link:hover {
+    text-decoration: underline;
 }
 </style>
