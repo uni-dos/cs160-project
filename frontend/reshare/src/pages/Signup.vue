@@ -43,7 +43,7 @@
         reenter: '',
         isSubmitting: false,
         errorMessage: '',
-        passwordValidationFailed: false
+        passwordValidationFailed: false,
       };
     },
     methods: {
@@ -51,6 +51,20 @@
         // reset validation
         this.errorMessage = '';
         this.passwordValidationFailed = false;
+
+        // validate username format
+        const usernameRegex = /^\w+$/;
+        if (!usernameRegex.test(this.username)) {
+          this.errorMessage = "Username can only contian letters, numbers, and underscores.";
+          return;
+        }
+
+        // validate password format
+        const passwordRegex = /^(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
+        if (!passwordRegex.test(this.password)) {
+          this.errorMessage = "Password must be at least 8 characters long, contain at least 1 uppercase letter, and 1 symbol."
+          return;
+        }
 
         // validate password match
         if (this.password !== this.reenter) {
