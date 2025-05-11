@@ -155,7 +155,7 @@ def create_recipe():
         db.session.execute(recipe_update, {"sustainability_rating": round(total_sustainability_score / 1000, 2), "recipe_id": recipe_id})
         
         db.session.commit()
-        return jsonify({"message": "Recipe created!", "recipe_id": recipe_id, "sustainability_rating": total_sustainability_score}), 201
+        return jsonify({"message": "Recipe created!", "recipe_id": recipe_id, "sustainability_rating": round(total_sustainability_score / 1000, 2)}), 201
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
