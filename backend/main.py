@@ -62,8 +62,8 @@ def get_session_username():
     if session.get("name"):
         return jsonify({"username": session["name"]}), 200
     else:
-        return jsonify({"username": "arden"}), 200
-        # return jsonify({"message" : "not logged in"}), 401
+        # return jsonify({"username": "arden"}), 200
+        return jsonify({"message" : "not logged in"}), 401
 
 # Create Recipe
 @app.route("/recipe", methods=["POST"])
