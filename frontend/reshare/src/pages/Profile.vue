@@ -5,7 +5,7 @@
     <h3>Recipes:</h3>
     <div class="row">
         <Recipe v-for="r in items" 
-            :key="r.recipe_id" :title="r.title"
+            :key="r.recipe_id" :title="r.title" :recipeId="r.recipe_id"
             :user="r.author_username" :steps="r.steps" :desc="r.short_description" 
             :rating="r.sustainability_rating" :servings="r.servings" :time="r.time" :average_rating="r.average_rating" :ingredients="r.ingredients"/>
     </div>

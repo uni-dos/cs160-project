@@ -56,6 +56,15 @@ def signup():
     session['name'] = username
     return jsonify({"username": username}), 201
 
+# get session username
+@app.route("/session-username", methods=["GET"])
+def get_session_username():
+    if session.get("name"):
+        return jsonify({"username": session["name"]}), 200
+    else:
+        return jsonify({"username": "arden"}), 200
+        # return jsonify({"message" : "not logged in"}), 401
+
 # Create Recipe
 @app.route("/recipe", methods=["POST"])
 def create_recipe():
@@ -154,8 +163,8 @@ def create_recipe():
 # Get all recipes
 @app.route("/recipes", methods=["GET"])
 def get_all_recipes():
-    if not session.get('name'):
-        return jsonify({"messege" : "not logged in"}), 401
+    # if not session.get('name'):
+    #     return jsonify({"messege" : "not logged in"}), 401
     try:
         sql = text("""
                    SELECT r.recipe_id, r.author_username, r.publish_date, r.title, r.short_description, r.steps, r.time, r.servings, r.sustainability_rating, r.average_rating, i.ingredient_name, i.amount, i.weight
@@ -350,11 +359,8 @@ def get_likes(username):
         return jsonify({"error": str(e)}), 400
 
 # create bookmark
-@app.route("/bookmark", methods=["POST"])
-def bookmark():
-    recipe_id = request.json.get("recipe_id")
-    username = request.json.get("username")
-
+@app.route("/bookmark/<username>/<recipe_id>", methods=["POST"])
+def bookmark(username, recipe_id):
     if not (recipe_id or username):
         return jsonify({"message": "Missing fields"}), 400
     
@@ -371,11 +377,8 @@ def bookmark():
         return jsonify({"message": str(e)}), 400
 
 # unbookmark
-@app.route("/unbookmark", methods=["DELETE"])
-def unbookmark():
-    recipe_id = request.json.get("recipe_id")
-    username = request.json.get("username")
-
+@app.route("/bookmark/<username>/<recipe_id>", methods=["DELETE"])
+def unbookmark(username, recipe_id):
     if not (recipe_id or username):
         return jsonify({"message": "Missing fields"}), 400
     
@@ -417,6 +420,27 @@ def get_bookmarks(username):
 
         recipes_list = list(recipes_dict.values())
         return jsonify({"username": username, "bookmarks": recipes_list}), 200
+    except Exception as e:
+        return jsonify({"message": str(e)}), 400
+
+# get bookmakred recipe ids
+@app.route("/get-bookmarks-by-id/<username>", methods=["GET"])
+def get_bookmarks_by_id(username):
+    if not username:
+        return jsonify({"message": "Missing fields"}), 400
+    
+    try:
+        recipes_query = text("""
+                             SELECT r.recipe_id
+                             FROM recipe AS r
+                             JOIN bookmark AS b ON r.recipe_id = b.recipe_id
+                             WHERE b.username = :username
+                             ORDER BY r.recipe_id DESC
+                             """)
+        
+        result = db.session.execute(recipes_query, {"username": username}).fetchall()
+        bookmarks = [row[0] for row in result]
+        return jsonify({"username": username, "bookmarks": bookmarks}), 200
     except Exception as e:
         return jsonify({"message": str(e)}), 400
 

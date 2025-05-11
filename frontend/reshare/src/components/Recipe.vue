@@ -34,17 +34,27 @@
        
         <template #footer>
             <div class="row">
-                <Message severity="secondary" variant="outlined" class="w-full"> Sustainability: {{ rating }} kgCO&#8322;e</Message>
-                <Button severity="info" class="w-full" icon="pi pi-sparkles" label="Rate" ></Button>
+                <Message severity="success" variant="outlined" class="w-full"> Sustainability: {{ rating }} kgCO&#8322;e</Message>
+                <Button
+                    :icon="Array.from(bookmarkedRecipes).includes(recipeId) ? 'pi pi-bookmark-fill' : 'pi pi-bookmark'"
+                    severity="secondary"
+                    class="w-full"
+                    @click="toggleBookmark(recipeId)"
+                ></Button>
             </div>
         </template>
     </Card>
 </template>
 
 <script lang="ts">
+import axios from 'axios'
 import { type Ingredient } from '../data/Ingredient'
 export default {
     props : {
+        recipeId: {
+            type: Number,
+            required: true
+        },
         user : {
             type : String,
             default : "user"
@@ -75,6 +85,58 @@ export default {
         },
         ingredients : {
             type : Array<Ingredient>,
+        }
+    },
+    data() {
+        return {
+            bookmarkedRecipes: [] as Number[],
+            sessionUsername: ''
+        };
+    },
+    mounted() {
+        this.fetchSessionUsername();
+    },
+    methods: {
+        async fetchBookmarkedRecipes() {
+            await axios.get(`/get-bookmarks-by-id/${this.sessionUsername}`)
+                    .then(response => {
+                        if (response.status === 200) {
+                            console.log(this.bookmarkedRecipes)
+                            this.bookmarkedRecipes = response.data.bookmarks;
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                        // this.$router.push('/login');
+                    })
+        },
+        async toggleBookmark(recipeId : Number) {
+            const isBookmarked = this.bookmarkedRecipes.includes(recipeId);
+            try {
+                if (isBookmarked) {
+                    await axios.delete(`/bookmark/${this.sessionUsername}/${recipeId}`);
+                    this.bookmarkedRecipes = this.bookmarkedRecipes.filter(id => id !== recipeId);
+                } else {
+                    await axios.post(`/bookmark/${this.sessionUsername}/${recipeId}`);
+                    this.bookmarkedRecipes = [...this.bookmarkedRecipes, recipeId];
+                }
+            } catch (error) {
+                console.error('Error toggling bookmark:', error);
+            }
+        },
+        async fetchSessionUsername() {
+            try {
+                const response = await axios.get('/session-username')
+                if (response.status === 200) {
+                this.sessionUsername = response.data.username;
+                this.fetchBookmarkedRecipes();
+                }
+                else {
+                console.log(response.data.message);
+                }
+            } catch (error) {
+                this.$router.push('/');
+            }
         }
     }
 }

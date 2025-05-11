@@ -12,7 +12,7 @@
         </div>
       </ul>
       <ul class="right-links">
-        <SplitButton icon="pi pi-user" @click="emitClicked('profile')" :model="items"><label>{{ $route.params.username }}</label></SplitButton>
+        <SplitButton icon="pi pi-user" @click="emitClicked('profile')" :model="items"><label>{{ sessionUsername }}</label></SplitButton>
         
       </ul>
     </div>
@@ -23,6 +23,7 @@ import axios from 'axios'
 export default {
   data () {
     return {
+      sessionUsername: '',
       searchQuery: '',
       items : [
         {
@@ -51,20 +52,36 @@ export default {
   methods: {
     emitClicked(buttonPressed : string) {
       if (buttonPressed === "create") {
-        this.$router.push('create');
+        this.$router.push(`/${this.sessionUsername}/create`);
       } else if (buttonPressed === 'logo') {
-        this.$router.push('homepage');
+        this.$router.push(`/${this.sessionUsername}/homepage`);
       } else if (buttonPressed === 'bookmarks') {
-        this.$router.push('bookmarks')
+        this.$router.push(`/${this.sessionUsername}/bookmarks`)
       }
     },
     handleSearch() {
       if (this.searchQuery.trim() !== "") {
         const sanitizedQuery = encodeURIComponent(this.searchQuery.trim());
-        this.$router.push({path: 'search', query: {q : sanitizedQuery}});
+        this.$router.push({path: `/${this.sessionUsername}/search`, query: {q : sanitizedQuery}});
         this.searchQuery = '';
       }
+    },
+    async fetchSessionUsername() {
+      try {
+        const response = await axios.get('/session-username')
+        if (response.status === 200) {
+          this.sessionUsername = response.data.username;
+        }
+        else {
+          console.log(response.data.message);
+        }
+      } catch (error) {
+        this.$router.push('/');
+      }
     }
+  },
+  mounted() {
+      this.fetchSessionUsername();
   },
   props : {
     user : {
