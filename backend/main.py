@@ -554,7 +554,7 @@ def search_recipes(search_term):
                                     i.ingredient_name, i.amount, i.weight
                     FROM recipe AS r
                     LEFT JOIN contains_ingredient AS i ON r.recipe_id = i.recipe_id
-                    WHERE MATCH(r.title, r.short_description, r.steps) AGAINST(:search_term IN NATURAL LANGUAGE MODE)
+                    WHERE MATCH(r.title, r.short_description, r.steps) AGAINST(REPLACE(:search_term, '<br>', ' ') IN NATURAL LANGUAGE MODE)
                        OR r.author_username LIKE :search_term_like
                        OR i.ingredient_name LIKE :search_term_like
                     GROUP BY r.recipe_id
