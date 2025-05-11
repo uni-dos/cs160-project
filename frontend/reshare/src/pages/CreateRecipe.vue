@@ -78,6 +78,13 @@
                 <Button label="Create Recipe" type="submit" icon="pi pi-check-circle"></Button>
             </div>
         </form>
+        <Dialog v-model:visible="showDialog" modal header="Recipe Created!" :style="{ width: '25rem' }">
+            <p>Your recipe has been successfully created.</p>
+            <p>The sustainability rating of your recipe is {{ sustainabilityRating }} kgCO&#8322;e</p>
+            <template #footer>
+                <Button label="OK" icon="pi pi-check" @click="showDialog = false"></Button>
+            </template>
+        </Dialog>
     </div>
 
 </template>
@@ -126,7 +133,9 @@
                     selectedWeights: [] as boolean[]
                 },
                 ingredientsData: ingredientsData,
-                ingredientsSuggestions: [] as string[]
+                ingredientsSuggestions: [] as string[],
+                showDialog: false,
+                sustainabilityRating: null
              }
             },
             async mounted() {
@@ -160,6 +169,18 @@
                     try {
                         const response = await axios.post('http://localhost:5000/recipe', payload, {headers: { 'Content-Type': 'application/json'}});
                         if (response.status === 201) {
+                            // clear input fields
+                            this.title = '';
+                            this.short_description = '';
+                            this.steps = [""];
+                            this.hours = null;
+                            this.mins = null;
+                            this.servings = null;
+                            this.selectedAmounts = [null];
+                            this.selectedWeights = [""];
+                            this.ingredients = [""];
+                            this.showDialog = true;
+                            this.sustainabilityRating = response.data.sustainability_rating;
                             console.log(response.data.message);
                         }
                     } catch (error) {

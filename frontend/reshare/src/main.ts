@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import PrimeVue from 'primevue/config'
 import Aura from '@primeuix/themes/aura';
 import { FormField } from '@primevue/forms';
-import { Button, InputText, Message, Password, FloatLabel, Card, Divider, SplitButton, Textarea, InputNumber, InputIcon, IconField, Select, AutoComplete } from 'primevue';
+import { Button, InputText, Message, Password, FloatLabel, Card, Divider, SplitButton, Textarea, InputNumber, InputIcon, IconField, Select, AutoComplete, Dialog } from 'primevue';
 
 // for icons 
 import 'primeicons/primeicons.css'
@@ -70,4 +70,5 @@ app.component('IconField', IconField)
 app.component('Select', Select)
 app.component('AutoComplete', AutoComplete)
 app.component('BxBowlHot', BxBowlHot);
+app.component('Dialog', Dialog);
 app.mount('#app');
