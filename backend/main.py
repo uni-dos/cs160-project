@@ -553,10 +553,14 @@ def search_recipes(search_term):
                                     r.sustainability_rating, r.average_rating,
                                     i.ingredient_name, i.amount, i.weight
                     FROM recipe AS r
-                    JOIN contains_ingredient AS i ON r.recipe_id = i.recipe_id
-                    WHERE MATCH(r.title, r.short_description, r.steps) AGAINST(:search_term in NATURAL LANGUAGE MODE)
+                    LEFT JOIN contains_ingredient AS i ON r.recipe_id = i.recipe_id
+                    WHERE MATCH(r.title, r.short_description, r.steps) AGAINST(:search_term IN NATURAL LANGUAGE MODE)
+                       OR r.author_username LIKE :search_term_like
+                       OR i.ingredient_name LIKE :search_term_like
+                    GROUP BY r.recipe_id
+                    ORDER BY r.publish_date DESC, r.sustainability_rating DESC
                    """)
-        result = db.session.execute(sql, {"search_term": search_term}).fetchall()
+        result = db.session.execute(sql, {"search_term": search_term, "search_term_like": f"%{search_term}%"}).fetchall()
         # convert Row objects to dictionaries
         rows = [row._mapping for row in result]
 
@@ -565,7 +569,7 @@ def search_recipes(search_term):
         recipes_list = list(recipes_dict.values())
         return jsonify({"search_results": recipes_list}), 200
     except Exception as e:
-        return jsonify({"message": str(e)}), 400
+        return jsonify({"message": str(e)}), 404
 
 def recipes_to_dict(rows):
     recipes_dict = {}
