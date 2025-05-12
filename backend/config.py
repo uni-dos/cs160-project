@@ -9,7 +9,11 @@ CORS(app, supports_credentials=True)
 
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
-app.secret=os.getenv('TOKEN_KEY')
+app.config["SESSION_USE_SIGNER"] = True
+app.config["SESSION_COOKIE_SAMESITE"] = "None"
+app.config["SESSION_COOKIE_SECURE"] = True
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.secret_key=os.getenv('TOKEN_KEY')
 Session(app)
  
 DB_URL = os.getenv('DB_URL')

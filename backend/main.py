@@ -25,7 +25,10 @@ def login():
         return jsonify({"message": "Incorrect username or password"}), 404
     
     if checkpw(password.encode("utf-8"), user.password.encode("utf-8")):
+        print("Session in login before assigning session username: ", session)
         session["name"] = username
+        session.modified = True
+        print("Session in login after assigning username: ", session)
         return jsonify({"username": username}), 201
     else:
         return jsonify({"message": "Incorrect username or password"}), 401
@@ -54,16 +57,18 @@ def signup():
         db.session.rollback()
         return jsonify({"message": str(e)}), 400
     session['name'] = username
+    session.modfied = True
     return jsonify({"username": username}), 201
 
 # get session username
 @app.route("/session-username", methods=["GET"])
 def get_session_username():
+    print("Retrieving session in /session-username: ", session)
     if session.get("name"):
         return jsonify({"username": session["name"]}), 200
     else:
-        return jsonify({"username": "arden"}), 200
-        # return jsonify({"message" : "not logged in"}), 401
+        # return jsonify({"username": "arden"}), 200
+        return jsonify({"message" : "not logged in"}), 401
 
 # Create Recipe
 @app.route("/recipe", methods=["POST"])
@@ -538,6 +543,7 @@ def get_followers(username):
 @app.route("/logout", methods=["POST"])
 def logout():
     session.clear()
+    session.modified = True
     return jsonify({"message" : "logged out"}), 200
 
 # search (FULLTEXT index added to recipe(title, short_description, steps) columns a

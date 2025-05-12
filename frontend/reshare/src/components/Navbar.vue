@@ -68,7 +68,7 @@ export default {
     },
     async fetchSessionUsername() {
       try {
-        const response = await axios.get('/session-username')
+        const response = await axios.get('/session-username', {withCredentials: true})
         if (response.status === 200) {
           this.sessionUsername = response.data.username;
         }
