@@ -72,3 +72,52 @@ CREATE TABLE bookmark(
     FOREIGN KEY(recipe_id) REFERENCES recipe(recipe_id) ON UPDATE CASCADE ON DELETE CASCADE,
     FOREIGN KEY(username) REFERENCES user(username) ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+CREATE TABLE ingredient(
+    ingredient_name VARCHAR(256),
+    sustainability_score DOUBLE,
+    PRIMARY KEY(ingredient_name)
+);
+
+CREATE TABLE contains_ingredient(
+    recipe_id INTEGER,
+    ingredient_name VARCHAR(256),
+    amount FLOAT,
+    weight ENUM('g','kg','lb','oz','l', 'ml', 'tbsp', 'tsp', 'cup', 'pt', 'qt', 'gal', 'floz', 'qty'),
+    PRIMARY KEY(recipe_id, ingredient_name),
+    FOREIGN KEY(recipe_id) REFERENCES recipe(recipe_id) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY(ingredient_name) REFERENCES ingredient(ingredient_name) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+delimiter //
+CREATE TRIGGER update_average_rating_after_insert_rate AFTER INSERT ON rate
+FOR EACH ROW
+BEGIN
+    DECLARE new_average DOUBLE;
+
+    SELECT AVG(value)
+    INTO new_average
+    FROM rate
+    WHERE recipe_id = NEW.recipe_id;
+
+    UPDATE recipe
+    SET average_rating = new_average
+    WHERE recipe_id = NEW.recipe_id;
+END; //
+
+delimiter //
+CREATE TRIGGER update_average_rating_after_delete AFTER DELETE ON rate
+FOR EACH ROW
+BEGIN
+    DECLARE new_average DOUBLE;
+    INTO new_average
+    FROM rate
+    WHERE recipe_id = OLD.recipe_id;
+
+    UPDATE recipe
+    SET average_rating = new_average
+    WHERE recipe_id = OLD.recipe_id;
+END; //
+
+ALTER TABLE recipe
+ADD FULLTEXT(title, short_description, steps);
