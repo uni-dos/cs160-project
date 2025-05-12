@@ -7,12 +7,12 @@
         <div class="search-container">
           <IconField>
             <InputIcon class="pi pi-search" />
-            <InputText v-model="searchQuery" variant="filled" size="large" placeholder="Search" @keyup.enter="handleSearch" />
+            <InputText v-model="searchQuery" variant="filled" size="medium" placeholder="Search" @keyup.enter="handleSearch" />
         </IconField>
         </div>
       </ul>
       <ul class="right-links">
-        <SplitButton icon="pi pi-user" @click="emitClicked('profile')" :model="items"><label>{{ sessionUsername }}</label></SplitButton>
+        <SplitButton @click="emitClicked('profile')" :model="items"><label>{{ sessionUsername }}</label></SplitButton>
         
       </ul>
     </div>
