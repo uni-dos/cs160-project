@@ -6,7 +6,8 @@
             <!-- Title -->
             <div class="title">
                 <FloatLabel variant="on">
-                    <InputText id="title" v-model="title" variant="filled" size="large" :invalid="invalidFields.title" @input="invalidFields.title = false"/>
+                    <Textarea id="title" v-model="title" variant="filled" size="large" :invalid="invalidFields.title" @input="invalidFields.title = false" rows="3" cols="30"></Textarea>
+                    <!-- <InputText id="title" v-model="title" variant="filled" size="large" :invalid="invalidFields.title" @input="invalidFields.title = false"/> -->
                     <label for="title">Recipe Title</label>
                 </FloatLabel>
                 <small v-if="invalidFields.title" class="p-error">Please enter a recipe title.</small>
@@ -25,7 +26,8 @@
                 <div v-for="(step, index) in steps" :key="index" class="step-entry">
                     <div class="step-row">
                         <FloatLabel variant="on">
-                            <InputText id="steps" v-model="steps[index]" variant="filled" size="large"  :invalid="invalidFields.steps[index]" @input="invalidFields.steps[index]=false"/>
+                            <Textarea id="steps" v-model="steps[index]" variant="filled" size="large" :invalid="invalidFields.steps[index]" @input="invalidFields.steps[index]=false" rows="4" cols="50"></Textarea>
+                            <!-- <InputText id="steps" v-model="steps[index]" variant="filled" size="large"  :invalid="invalidFields.steps[index]" @input="invalidFields.steps[index]=false"/> -->
                             <label for="steps">Step {{  index + 1 }}</label>
                         </FloatLabel>
                         <Button class="remove-btn" icon="pi pi-trash" severity="danger" @click="removeStep(index)"></Button>
