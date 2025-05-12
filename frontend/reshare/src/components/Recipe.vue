@@ -5,7 +5,7 @@
             <Divider />
         <div class="col">
             <Message variant="simple" severity="success">
-                By <router-link :to="`/${user}/profile`" class="profile-link">@{{ user }}</router-link>
+                Created by <router-link :to="`/${user}/profile`" class="profile-link">@{{ user }}</router-link>
             </Message>
             <Message variant="simple" severity="secondary"> {{ desc }}</Message>
        
@@ -34,7 +34,7 @@
        
         <template #footer>
             <div class="row">
-                <Message severity="success" variant="outlined" class="w-full"> Sustainability: {{ rating }} kgCO&#8322;e</Message>
+                <Message severity="success" variant="outlined" class="w-full"> <FlFilledLeafTwo/> {{ rating }} kgCO&#8322;e</Message>
                 <Button
                     :icon="Array.from(bookmarkedRecipes).includes(recipeId) ? 'pi pi-bookmark-fill' : 'pi pi-bookmark'"
                     severity="secondary"
@@ -49,6 +49,7 @@
 <script lang="ts">
 import axios from 'axios'
 import { type Ingredient } from '../data/Ingredient'
+import { FlFilledLeafTwo, IcOrganicFood, IcOrganicFoodSquare } from '@kalimahapps/vue-icons';
 export default {
     props : {
         recipeId: {
