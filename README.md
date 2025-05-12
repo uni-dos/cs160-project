@@ -13,9 +13,24 @@ Technologies used
 
 ### **Database**
 
+#### **AWS MySQL Database**
+
 Our application uses a MySQL database hosted on AWS. The connection details for the AWS database are stored in environment variables and configured accordingly. We created the database's tables by connecting to the database through MySQL workbench and executing the sql script _createdb.sql_ found in the /backend directory.
 
+#### **Local MySQL Database**
+
 For local development, you need to set up a local MySQL database, configure the connection details in environment variables, and run the sql script _createdb.sql_ found in the /backend directory to create the tables.
+
+Your .env file should be located in the /backend directory and should be formatted like this:
+
+```
+DB_URL=localhost
+DB_PORT=3306
+DB_UNAME=root
+DB_PSWD=password
+DB_NAME=project_db
+TOKEN_KEY=SOME_KEY
+```
 
 ### **Backend**
 
