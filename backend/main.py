@@ -25,10 +25,8 @@ def login():
         return jsonify({"message": "Incorrect username or password"}), 404
     
     if checkpw(password.encode("utf-8"), user.password.encode("utf-8")):
-        print("Session in login before assigning session username: ", session)
         session["name"] = username
         session.modified = True
-        print("Session in login after assigning username: ", session)
         return jsonify({"username": username}), 201
     else:
         return jsonify({"message": "Incorrect username or password"}), 401
@@ -63,7 +61,6 @@ def signup():
 # get session username
 @app.route("/session-username", methods=["GET"])
 def get_session_username():
-    print("Retrieving session in /session-username: ", session)
     if session.get("name"):
         return jsonify({"username": session["name"]}), 200
     else:
@@ -563,7 +560,6 @@ def search_recipes(search_term):
                     WHERE MATCH(r.title, r.short_description, r.steps) AGAINST(REPLACE(:search_term, '<br>', ' ') IN NATURAL LANGUAGE MODE)
                        OR r.author_username LIKE :search_term_like
                        OR i.ingredient_name LIKE :search_term_like
-                    GROUP BY r.recipe_id
                     ORDER BY r.publish_date DESC, r.sustainability_rating DESC
                    """)
         result = db.session.execute(sql, {"search_term": search_term, "search_term_like": f"%{search_term}%"}).fetchall()
