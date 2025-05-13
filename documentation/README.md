@@ -9,6 +9,8 @@ Technologies used
 - Primevue
 - Vue
 
+Demo on [YouTube](https://youtu.be/G-J9-ZoIDn4)
+
 ## How to Run
 
 ### **Database**
