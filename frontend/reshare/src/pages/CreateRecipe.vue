@@ -21,6 +21,25 @@
                 </FloatLabel>
             </div>
 
+            <!-- Ingredients -->
+            <div class="ingredients">
+                <div v-for="(ingredient, index) in ingredients" :key="index" class="ingredient-entry">
+                    <div class="ingredient-row">
+                        <FloatLabel variant="on">
+                            <AutoComplete v-model="ingredients[index]" inputId="ingredientsSuggestions" dropdown :suggestions="ingredientsSuggestions" @complete="search" variant="filled" size="large" forceSelection @keydown.enter.prevent :invalid="invalidFields.ingredients[index]" @input="invalidFields.ingredients[index]=false" ></AutoComplete>
+                            <label for="ingredientsSuggestions">Ingredient {{ index + 1 }}</label>
+                        </FloatLabel>
+                        <FloatLabel variant="on">
+                            <InputNumber class="ingredientAmount" inputId="amount" v-model="selectedAmounts[index]" fluid variant="filled" size="large" :min="0" :minFractionDigits="0" :maxFractionDigits="2" showButtons :step="0.25" :invalid="invalidFields.selectedAmounts[index]" @input="invalidFields.selectedAmounts[index]=false"/>
+                            <label for="amount">Amount</label>
+                        </FloatLabel>
+                        <Select v-model="selectedWeights[index]" :options="weights" optionLabel="label" optionValue="value" showClear placeholder="Select a weight" variant="filled" size="large" :invalid="invalidFields.selectedWeights[index]" @change="invalidFields.selectedWeights[index]=false"></Select>
+                        <Button class="remove-btn" icon="pi pi-trash" severity="danger" @click="removeIngredient(index)"></Button>
+                    </div>
+                </div>
+                <Button label="Add an ingredient" icon="pi pi-plus" @click="addIngredient"></Button>
+            </div>
+
             <!-- Steps -->
             <div class="steps">
                 <div v-for="(step, index) in steps" :key="index" class="step-entry">
@@ -54,25 +73,6 @@
                     <InputNumber inputId="servings" v-model="servings" suffix=" servings" fluid variant="filled" size="large" :min="0" showButtons :step="1" :invalid="invalidFields.servings" @input="invalidFields.servings = false"/>
                     <label for="servings">Number of Servings</label>
                 </FloatLabel>
-            </div>
-
-            <!-- Ingredients -->
-            <div class="ingredients">
-                <div v-for="(ingredient, index) in ingredients" :key="index" class="ingredient-entry">
-                    <div class="ingredient-row">
-                        <FloatLabel variant="on">
-                            <AutoComplete v-model="ingredients[index]" inputId="ingredientsSuggestions" dropdown :suggestions="ingredientsSuggestions" @complete="search" variant="filled" size="large" forceSelection @keydown.enter.prevent :invalid="invalidFields.ingredients[index]" @input="invalidFields.ingredients[index]=false" ></AutoComplete>
-                            <label for="ingredientsSuggestions">Ingredient {{ index + 1 }}</label>
-                        </FloatLabel>
-                        <FloatLabel variant="on">
-                            <InputNumber class="ingredientAmount" inputId="amount" v-model="selectedAmounts[index]" fluid variant="filled" size="large" :min="0" :minFractionDigits="0" :maxFractionDigits="2" showButtons :step="0.25" :invalid="invalidFields.selectedAmounts[index]" @input="invalidFields.selectedAmounts[index]=false"/>
-                            <label for="amount">Amount</label>
-                        </FloatLabel>
-                        <Select v-model="selectedWeights[index]" :options="weights" optionLabel="label" optionValue="value" showClear placeholder="Select a weight" variant="filled" size="large" :invalid="invalidFields.selectedWeights[index]" @change="invalidFields.selectedWeights[index]=false"></Select>
-                        <Button class="remove-btn" icon="pi pi-trash" severity="danger" @click="removeIngredient(index)"></Button>
-                    </div>
-                </div>
-                <Button label="Add an ingredient" icon="pi pi-plus" @click="addIngredient"></Button>
             </div>
 
             <!-- Submit -->
